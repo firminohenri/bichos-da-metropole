@@ -1,81 +1,126 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-BR">
 
 <head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>AquaTech | Página Inicial</title>
+  <title>Bichos da Metrópole | Página Inicial</title>
+  <link rel="stylesheet" href="./css/style.css">
+  <link rel="icon" href="./assets/icon/favicon2.ico">
 
-    <script src="./js/sessao.js"></script>
+  <style>
+    /* ========== Fontes ========== */
+    @font-face {
+      font-family: 'Cyberform Demo';
+      src: url('./assets/fonts/CyberformDemo.otf') format('opentype');
+      font-weight: normal;
+      font-style: normal;
+      font-display: swap;
+    }
 
-    <link rel="stylesheet" href="./css/estilo.css">
-    <link rel="icon" href="./assets/icon/favicon2.ico">
-    <link rel="preconnect" href="https://fonts.gstatic.com">
+    @font-face {
+      font-family: 'Cyberform Demo';
+      src: url('./assets/fonts/CyberformDemo-Oblique.otf') format('opentype');
+      font-weight: normal;
+      font-style: italic;
+      font-display: swap;
+    }
+
+    @font-face {
+      font-family: 'Chakra Petch';
+      src: url('./assets/fonts/ChakraPetch-Regular.ttf') format('truetype');
+      font-weight: 400;
+      font-style: normal;
+      font-display: swap;
+    }
+
+    @font-face {
+      font-family: 'Chakra Petch';
+      src: url('./assets/fonts/ChakraPetch-Medium.ttf') format('truetype');
+      font-weight: 500;
+      font-style: normal;
+      font-display: swap;
+    }
+
+    @font-face {
+      font-family: 'Chakra Petch';
+      src: url('./assets/fonts/ChakraPetch-SemiBold.ttf') format('truetype');
+      font-weight: 600;
+      font-style: normal;
+      font-display: swap;
+    }
+
+    @font-face {
+      font-family: 'Chakra Petch';
+      src: url('./assets/fonts/ChakraPetch-Bold.ttf') format('truetype');
+      font-weight: 700;
+      font-style: normal;
+      font-display: swap;
+    }
+
+    
+  </style>
 </head>
 
 <body>
-    <div class="header">
-      <div class="container">
-        <h1 class="titulo">AquaTech</h1>
-        <ul class="navbar">
-          <li class="agora">
-            <a href="#">Inicial</a>
-          </li>
-          <li>
-            <a href="simulador.html">Simulador</a>
-          </li>
-          <li>|</li>
-          <li>
-            <a href="login.html">Login</a>
-          </li>
-          <li>
-            <a href="cadastro.html">Cadastro</a>
-          </li>
-        </ul>
+  <header class="site-header">
+    <div class="container header-inner">
+      <a class="brand" href="./index.html" aria-label="Bichos da Metrópole - Início">
+        <img src="./assets/assets-home/Bichos da Metrópole em Pixel Art 1.png" alt="Bichos da Metrópole">
+      </a>
+
+      <nav class="nav" aria-label="Principal">
+        <a href="./index.html" aria-current="page">Home</a>
+        <a href="#bestiario">Bestiário</a>
+        <a href="#proposta">A Proposta</a>
+        <a href="#vida-urbana">Vida Urbana</a>
+      </nav>
+
+      <div class="header-actions">
+        <a class="btn btn-solid" href="./cadastro.html">Cadastre-se</a>
+        <a class="btn btn-outline" href="./login.html">Login</a>
       </div>
     </div>
-  
-    <div class="banner">
-      <div class="container">
-        <p>Preservando <span>hoje</span> para existirem <span>amanhã</span>.</p>
+  </header>
+
+  <main>
+    <section class="hero" aria-labelledby="hero-title">
+      <div class="hero-visual" aria-hidden="true">
+        <img class="hero-city" src="./assets/assets-home/city-bg.svg" alt="">
+        <img class="hero-bird" src="./assets/assets-home/bentevi.png" alt="">
       </div>
-    </div>
-  
-    <div class="social">
-      <div class="container">
-        <div class="boxes">
-          <div class="box">
-            <img src="assets/imgs/planet-earth_color.png">
-            <h4>Missão</h4>
-            <p>Lorem ipsum, dolor sit amet consectetur adipisicing elit. Et, quas cupiditate asperiores provident magnam
-              vitae illum iusto fugiat atque deleniti nulla sed iure suscipit, laborum, aliquid accusantium cum dicta
-              minima.</p>
-          </div>
-          <div class="box">
-            <img src="assets/imgs/lightbulb_color.png">
-            <h4>Visão</h4>
-            <p>Lorem ipsum, dolor sit amet consectetur adipisicing elit. Et, quas cupiditate asperiores provident magnam
-              vitae illum iusto fugiat atque deleniti nulla sed iure suscipit, laborum, aliquid accusantium cum dicta
-              minima.</p>
-          </div>
-          <div class="box">
-            <img src="assets/imgs/growth_color.png">
-            <h4>Valores</h4>
-            <p>Lorem ipsum, dolor sit amet consectetur adipisicing elit. Et, quas cupiditate asperiores provident magnam
-              vitae illum iusto fugiat atque deleniti nulla sed iure suscipit, laborum, aliquid accusantium cum dicta
-              minima.</p>
-          </div>
+
+      <div class="hero-main">
+        <div class="hero-copy">
+          <h1 class="hero-title" id="hero-title">A cidade é mais selvagem do que você imagina.</h1>
+          <p class="hero-description">
+            Descubra a biodiversidade escondida entre prédios, parques e
+            ruas de São Paulo. Registre seus encontros com a natureza e
+            construa sua própria coleção de descobertas.
+          </p>
+          <a class="btn btn-primary" href="#bestiario">Conhecer espécies</a>
         </div>
+        <div class="hero-visual-slot" aria-hidden="true"></div>
       </div>
-    </div>
-  
-    <div class="footer">
-      <div class="container">
-        <h4>Feito com amor por aluno &hearts; SPTech &copy; 2023-2026</h4>
+
+      <div class="hero-steps">
+        <article class="step-card">
+          <h2>01. Encontre</h2>
+          <p>Observe um animal durante seu dia.</p>
+        </article>
+        <article class="step-card">
+          <h2>02. Registre</h2>
+          <p>Observe com atenção e descubra a fauna escondida pela cidade.</p>
+        </article>
+        <article class="step-card">
+          <h2>03. Colecione</h2>
+          <p>Complete seu bestiário e conheça novas espécies.</p>
+        </article>
       </div>
-    </div>
-  </body>
+    </section>
+  </main>
+</body>
 
 </html>

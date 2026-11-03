@@ -1,0 +1,463 @@
+ 
+
+    /* ========== Variáveis ========== */
+    :root {
+      --color-bg: #000000;
+      --color-surface: #111111;
+      --color-surface-border: #2a2a2a;
+      --color-primary: #00ff9c;
+      --color-primary-strong: #19f896;
+      --color-text: #ffffff;
+      --color-text-muted: #a3a3a3;
+      --color-purple: #a855f7;
+      --color-purple-deep: #c026d3;
+      --color-btn-solid-bg: #ffffff;
+      --color-btn-solid-text: #000000;
+      --font-display: 'Cyberform Demo', sans-serif;
+      --font-body: 'Chakra Petch', 'Segoe UI', sans-serif;
+      --header-height: 88px;
+      --container-width: 1120px;
+      --container-padding: 24px;
+      --radius-btn: 0px;
+      --transition: 0.2s ease;
+    }
+
+    /* ========== Reset / Base ========== */
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      font-family: var(--font-body);
+      background-color: var(--color-bg);
+      color: var(--color-text);
+      line-height: 1.5;
+      min-height: 100vh;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    img {
+      max-width: 100%;
+      display: block;
+    }
+
+    a {
+      text-decoration: none;
+      color: inherit;
+    }
+
+    ul {
+      list-style: none;
+    }
+
+    .container {
+      width: min(var(--container-width), 100% - var(--container-padding) * 2);
+      margin-inline: auto;
+    }
+
+    /* ========== Botões ========== */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--font-body);
+      font-weight: 600;
+      font-size: 0.875rem;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      border-radius: var(--radius-btn);
+      border: 1px solid transparent;
+      cursor: pointer;
+      transition: background-color var(--transition), color var(--transition), border-color var(--transition), transform var(--transition);
+      white-space: nowrap;
+      line-height: 1;
+    }
+
+    .btn:focus-visible {
+      outline: 2px solid var(--color-primary);
+      outline-offset: 3px;
+    }
+
+    .btn-solid {
+      background-color: var(--color-btn-solid-bg);
+      color: var(--color-btn-solid-text);
+      padding: 0.85rem 1.35rem;
+      border-color: var(--color-btn-solid-bg);
+    }
+
+    .btn-solid:hover {
+      background-color: var(--color-primary);
+      border-color: var(--color-primary);
+    }
+
+    .btn-outline {
+      background-color: transparent;
+      color: var(--color-text);
+      padding: 0.85rem 1.35rem;
+      border-color: #ffffff;
+    }
+
+    .btn-outline:hover {
+      background-color: var(--color-text);
+      color: var(--color-btn-solid-text);
+    }
+
+    .btn-primary {
+      background-color: var(--color-primary);
+      color: var(--color-btn-solid-text);
+      padding: 1.05rem 1.75rem;
+      font-weight: 700;
+      font-size: 0.95rem;
+      letter-spacing: 0.06em;
+      border-color: var(--color-primary);
+      box-shadow: 0 0 24px rgba(0, 255, 156, 0.18);
+    }
+
+    .btn-primary:hover {
+      background-color: #5dffb8;
+      border-color: #5dffb8;
+      transform: translateY(-1px);
+      box-shadow: 0 0 32px rgba(0, 255, 156, 0.35);
+    }
+
+    /* ========== Header ========== */
+    .site-header {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background-color: rgba(0, 0, 0, 0.92);
+      backdrop-filter: blur(8px);
+      border-bottom: 1px solid #2e2e2e;
+    }
+
+    .header-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1.5rem;
+      min-height: var(--header-height);
+      padding-block: 0.75rem;
+    }
+
+    .brand {
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+    }
+
+    .brand img {
+      width: 177px;
+      height: auto;
+    }
+
+    .nav {
+      display: flex;
+      align-items: center;
+      gap: 1.75rem;
+      margin-left: auto;
+    }
+
+    .nav a {
+      font-size: 0.95rem;
+      font-weight: 500;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      color: var(--color-text);
+      transition: color var(--transition);
+    }
+
+    .nav a:hover {
+      color: var(--color-primary);
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      flex-shrink: 0;
+    }
+
+    /* ========== Hero ========== */
+    .hero {
+      position: relative;
+      isolation: isolate;
+      overflow: hidden;
+      padding-top: 3.5rem;
+      padding-bottom: 2.5rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .hero-main {
+      display: grid;
+      grid-template-columns: minmax(0, 1.2fr) minmax(0, 0.8fr);
+      gap: 1.5rem;
+      align-items: center;
+      position: relative;
+      z-index: 3;
+      width: min(var(--container-width), 100% - var(--container-padding) * 2);
+      margin-inline: auto;
+      padding-bottom: 1.75rem;
+      min-height: 480px;
+    }
+
+    /* Coluna direita reserva espaço do visual (o visual sai do fluxo) */
+    .hero-main .hero-visual-slot {
+      min-height: 1px;
+      pointer-events: none;
+    }
+
+    .hero-copy {
+        width: 700px;
+      position: relative;
+      z-index: 3;
+      padding-top: 0.5rem;
+    }
+
+    .hero-title {
+      font-family: var(--font-display);
+      font-size: clamp(1.85rem, 3.6vw, 3rem);
+      font-weight: 400;
+      line-height: 1.2;
+      text-transform: uppercase;
+      color: var(--color-text);
+      letter-spacing: 0.01em;
+      margin-bottom: 1.35rem;
+    }
+
+    .hero-description {
+      font-size: 1.02rem;
+      font-weight: 400;
+      color: #d4d4d4;
+      line-height: 1.65;
+      max-width: 30rem;
+      margin-bottom: 2rem;
+    }
+
+    /* Visual decorativo: posiciona o recorte; camadas resolvidas nos filhos */
+    .hero-visual {
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      right: max(0px, calc((100% - var(--container-width)) / 2 - 1rem));
+      width: min(48%, 560px);
+      pointer-events: none;
+      user-select: none;
+    }
+
+    .hero-city {
+      position: absolute;
+      right: -6%;
+      top: 12%;
+      width: 114%;
+      height: auto;
+      opacity: 0.9;
+      z-index: 1;
+    }
+
+    .hero-bird {
+      position: absolute;
+      right: -6%;
+      bottom: 8%;
+      width: min(100%, 480px);
+      height: auto;
+      z-index: 20;
+      filter: drop-shadow(0 18px 30px rgba(0, 0, 0, 0.55));
+    }
+
+    /* ========== Passos (hero) ========== */
+    .hero-steps {
+      position: relative;
+      z-index: 10;
+      width: min(var(--container-width), 100% - var(--container-padding) * 2);
+      margin-inline: auto;
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 1.25rem;
+    }
+
+    .step-card {
+      background-color: var(--color-surface);
+      border: 1px solid var(--color-surface-border);
+      padding: 1.5rem 1.4rem 1.6rem;
+      min-height: 145px;
+      transition: border-color var(--transition), transform var(--transition);
+    }
+
+    .step-card:hover {
+      border-color: rgba(0, 255, 156, 0.45);
+      transform: translateY(-2px);
+    }
+
+    .step-card h2 {
+      font-family: var(--font-body);
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: var(--color-text);
+      margin-bottom: 0.7rem;
+      letter-spacing: 0.01em;
+    }
+
+    .step-card p {
+      font-size: 0.92rem;
+      color: var(--color-text-muted);
+      line-height: 1.55;
+      font-weight: 400;
+    }
+
+    /* ========== Responsivo ========== */
+    @media (max-width: 1024px) {
+      .hero-main {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+        padding-bottom: 1.5rem;
+      }
+
+      .hero-copy {
+        max-width: 40rem;
+      }
+
+      .hero-visual {
+        position: relative;
+        top: auto;
+        bottom: auto;
+        right: auto;
+        width: 100%;
+        height: auto;
+        min-height: 320px;
+        order: -1;
+        margin-bottom: 1rem;
+      }
+
+      .hero-city {
+        right: 50%;
+        top: 50%;
+        transform: translate(50%, -50%);
+        width: min(100%, 480px);
+        opacity: 0.7;
+      }
+
+      .hero-bird {
+        right: 50%;
+        bottom: auto;
+        top: 50%;
+        transform: translate(50%, -50%);
+        width: min(55%, 320px);
+        opacity: 0.95;
+      }
+
+      .hero-main {
+        min-height: 0;
+        order: 1;
+      }
+
+      .hero-main .hero-visual-slot {
+        display: none;
+      }
+
+      .hero {
+        display: flex;
+        flex-direction: column;
+      }
+
+      .hero-steps {
+        order: 2;
+      }
+
+      .nav {
+        gap: 1.1rem;
+      }
+
+      .nav a {
+        font-size: 0.85rem;
+      }
+    }
+
+    @media (max-width: 768px) {
+      :root {
+        --header-height: auto;
+      }
+
+      .header-inner {
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 1rem;
+      }
+
+      .brand {
+        width: 100%;
+        justify-content: center;
+      }
+
+      .nav {
+        margin-left: 0;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 0.85rem 1.25rem;
+      }
+
+      .header-actions {
+        width: 100%;
+        justify-content: center;
+      }
+
+      .hero {
+        padding-top: 2.5rem;
+        min-height: auto;
+      }
+
+      .hero-title {
+        font-size: 2.35rem;
+      }
+
+      .hero-description {
+        font-size: 0.98rem;
+      }
+
+      .hero-visual {
+        min-height: 280px;
+      }
+
+      .hero-steps {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+      }
+
+      .step-card {
+        min-height: auto;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .btn-solid,
+      .btn-outline {
+        padding: 0.75rem 1rem;
+        font-size: 0.8rem;
+      }
+
+      .btn-primary {
+        width: 100%;
+        padding: 1rem 1.25rem;
+      }
+
+      .hero-visual {
+        min-height: 260px;
+      }
+
+      .hero-bird {
+        width: min(70%, 260px);
+      }
+
+      .hero-steps {
+        order: 2;
+      }
+    }
