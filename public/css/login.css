@@ -1,0 +1,260 @@
+
+
+.login-section {
+  display: flex;
+  align-items: center;
+  min-height: calc(100vh - var(--header-height));
+  padding-block: 4rem;
+}
+
+.login-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  align-items: center;
+  gap: 3rem;
+}
+
+/* Páginas de autenticação (login/cadastro): tudo visível na tela, sem scroll */
+
+.auth-page {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.auth-page .site-header {
+  flex-shrink: 0;
+}
+
+.auth-page .login-section {
+  flex: 1;
+  min-height: 0;
+  padding-block: 2rem;
+}
+
+.auth-page .site-footer {
+  flex-shrink: 0;
+  padding: 2rem 0 1.25rem;
+}
+
+.auth-page .footer-inner {
+  gap: 1.1rem;
+}
+
+.auth-page .footer-bottom {
+  padding-top: 1rem;
+}
+
+/* Variantes compactas (cadastro tem um campo a mais que o login) */
+
+.login-card.compact {
+  padding: 1.9rem 2.5rem 2rem;
+}
+
+.login-form.compact .campo {
+  margin-bottom: 0.95rem;
+}
+
+/* Coluna esquerda: boas-vindas + logo */
+
+.login-title {
+  font-family: var(--font-display);
+  font-size: clamp(1.55rem, 2.6vw, 2.05rem);
+  font-weight: 400;
+  line-height: 1.25;
+  text-transform: uppercase;
+  letter-spacing: 0.01em;
+  color: var(--color-text);
+  margin-bottom: 1.1rem;
+}
+
+.login-sub {
+  font-size: 1rem;
+  color: var(--color-text-muted);
+  margin-bottom: 3.25rem;
+}
+
+.login-sub strong {
+  color: var(--color-text);
+  font-weight: 500;
+}
+
+.login-logo {
+  width: min(360px, 100%);
+  height: auto;
+}
+
+/* Coluna direita: card do formulário */
+
+.login-card {
+  background-color: #131313;
+  padding: 2.4rem 2.5rem 2.6rem;
+  max-width: 440px;
+  width: 100%;
+  justify-self: start;
+}
+
+.login-form {
+  display: flex;
+  flex-direction: column;
+}
+
+.login-label {
+  font-family: var(--font-body);
+  font-size: 0.78rem;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #d4d4d4;
+  margin-bottom: 0.55rem;
+}
+
+.campo {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 1.5rem;
+}
+
+.login-input {
+  font-family: var(--font-body);
+  font-size: 0.9rem;
+  color: var(--color-text);
+  background-color: #0d0d0d;
+  border: 1px solid rgba(35, 254, 168, 0.35);
+  border-radius: 0;
+  padding: 0.8rem 0.9rem;
+  width: 100%;
+  transition: border-color var(--transition);
+}
+
+.login-input::placeholder {
+  color: #6b6b6b;
+}
+
+.login-input:focus-visible {
+  outline: none;
+  border-color: var(--color-primary);
+}
+
+.btn-login {
+  font-family: var(--font-body);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  padding: 0.9rem 1rem;
+  background-color: #23fea8;
+  color: #000000;
+  border: 1px solid #23fea8;
+  border-radius: 0;
+  font-size: 0.92rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: background-color var(--transition), border-color var(--transition), transform var(--transition);
+}
+
+.btn-login:hover {
+  background-color: #5dffb8;
+  border-color: #5dffb8;
+  transform: translateY(-1px);
+}
+
+.btn-login:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 3px;
+}
+
+/* ========== Alertas (IDs preservados — usados pelo script) ========== */
+
+.alerta_erro {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.card_erro {
+  display: none;
+  position: fixed;
+  top: calc(var(--header-height) + 1rem);
+  right: var(--container-padding);
+  z-index: 200;
+  background-color: #0d0d0d;
+  color: var(--color-text);
+  width: 240px;
+  border: 1px solid #e24141;
+  padding: 0.85rem 1rem;
+}
+
+#mensagem_erro {
+  font-size: 0.85rem;
+  font-weight: 500;
+  line-height: 1.45;
+}
+
+.loading-div {
+  display: none;
+  justify-content: center;
+  margin-top: 1rem;
+}
+
+.loading-div img {
+  width: 40px;
+  height: 40px;
+}
+
+#div_erros_login {
+  display: none;
+  color: #ff9d9d;
+  font-size: 0.85rem;
+  line-height: 1.45;
+  margin-top: 1rem;
+}
+
+/* ========== Responsivo ========== */
+
+/* Telas baixas (notebooks): compacta antes de surgir scroll */
+@media (min-width: 901px) and (max-height: 840px) {
+  .auth-page .login-section {
+    padding-block: 1rem;
+  }
+
+  .login-sub {
+    margin-bottom: 1.75rem;
+  }
+
+  .login-card.compact {
+    padding: 1.5rem 2rem 1.6rem;
+  }
+
+  .login-form.compact .campo {
+    margin-bottom: 0.75rem;
+  }
+}
+
+@media (max-width: 900px) {
+  .login-section {
+    min-height: 0;
+    padding-block: 2.5rem 3rem;
+  }
+
+  .login-grid {
+    grid-template-columns: 1fr;
+    gap: 2rem;
+  }
+
+  .login-sub {
+    margin-bottom: 2.25rem;
+  }
+
+  .login-card {
+    justify-self: stretch;
+    max-width: 520px;
+  }
+}
+
+@media (max-width: 480px) {
+  .login-card {
+    padding: 1.75rem 1.4rem 2rem;
+  }
+}

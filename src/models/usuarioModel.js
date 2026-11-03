@@ -15,8 +15,10 @@ function cadastrar(nome, email, senha, fkEmpresa) {
     
     // Insira exatamente a query do banco aqui, lembrando da nomenclatura exata nos valores
     //  e na ordem de inserção dos dados.
+    // fkEmpresa é opcional: quando ausente, grava NULL (coluna fk_empresa permite nulo)
+    var fkEmpresaValor = fkEmpresa == undefined ? "NULL" : `'${fkEmpresa}'`;
     var instrucaoSql = `
-        INSERT INTO usuario (nome, email, senha, fk_empresa) VALUES ('${nome}', '${email}', '${senha}', '${fkEmpresa}');
+        INSERT INTO usuario (nome, email, senha, fk_empresa) VALUES ('${nome}', '${email}', '${senha}', ${fkEmpresaValor});
     `;
     console.log("Executando a instrução SQL: \n" + instrucaoSql);
     return database.executar(instrucaoSql);
