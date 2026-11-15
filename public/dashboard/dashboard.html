@@ -105,11 +105,11 @@
     </div>
 
     <script>
-        var chartAvistamentos;
-        var chartEspecies;
+        let chartAvistamentos;
+        let chartEspecies;
 
         function carregarDashboard() {
-            var idUsuario = sessionStorage.ID_USUARIO;
+            let idUsuario = sessionStorage.ID_USUARIO;
 
             fetch(`/dashboard/resumo/${idUsuario}`, { cache: 'no-store' }).then(function (response) {
                 if (response.ok) {
@@ -128,10 +128,10 @@
         }
 
         function atualizarResumo(resultado) {
-            var totalCatalogo = Number(resultado.totalCatalogo || 0);
-            var especiesDescobertas = Number(resultado.especiesDescobertas || 0);
-            var totalAvistamentos = Number(resultado.totalAvistamentos || 0);
-            var progresso = totalCatalogo > 0 ? Math.round((especiesDescobertas / totalCatalogo) * 100) : 0;
+            let totalCatalogo = Number(resultado.totalCatalogo || 0);
+            let especiesDescobertas = Number(resultado.especiesDescobertas || 0);
+            let totalAvistamentos = Number(resultado.totalAvistamentos || 0);
+            let progresso = totalCatalogo > 0 ? Math.round((especiesDescobertas / totalCatalogo) * 100) : 0;
 
             document.getElementById('totalEspecies').textContent = especiesDescobertas;
             document.getElementById('totalAvistamentos').textContent = totalAvistamentos;
@@ -142,12 +142,12 @@
         }
 
         function renderizarChartAvistamentos(avistamentosPorMes) {
-            var ctx = document.getElementById('chartAvistamentos');
-            var meses = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'];
-            var dados = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+            let ctx = document.getElementById('chartAvistamentos');
+            let meses = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'];
+            let dados = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
 
-            for (var i = 0; i < avistamentosPorMes.length; i++) {
-                var item = avistamentosPorMes[i];
+            for (let i = 0; i < avistamentosPorMes.length; i++) {
+                let item = avistamentosPorMes[i];
                 if (item.numeroMes >= 1 && item.numeroMes <= 12) {
                     dados[item.numeroMes - 1] = Number(item.total);
                 }
@@ -202,14 +202,14 @@
         }
 
         function renderizarChartEspecies(especiesPorGrupo) {
-            var ctx = document.getElementById('chartEspecies');
-            var labels = ['Ave', 'Mamífero', 'Réptil', 'Anfíbio', 'Inseto'];
-            var cores = ['#ffd91a', '#a92cff', '#c42cff', '#8f22ff', '#cc33ff'];
-            var dados = [0, 0, 0, 0, 0];
+            let ctx = document.getElementById('chartEspecies');
+            let labels = ['Ave', 'Mamífero', 'Réptil', 'Anfíbio', 'Inseto'];
+            let cores = ['#ffd91a', '#a92cff', '#c42cff', '#8f22ff', '#cc33ff'];
+            let dados = [0, 0, 0, 0, 0];
 
-            for (var i = 0; i < especiesPorGrupo.length; i++) {
-                var item = especiesPorGrupo[i];
-                var indice = labels.indexOf(item.grupo);
+            for (let i = 0; i < especiesPorGrupo.length; i++) {
+                let item = especiesPorGrupo[i];
+                let indice = labels.indexOf(item.grupo);
                 if (indice > -1) {
                     dados[indice] = Number(item.total);
                 }
@@ -259,7 +259,7 @@
         }
 
         function renderizarRegistros(registros) {
-            var lista = document.getElementById('recordsList');
+            let lista = document.getElementById('recordsList');
             lista.innerHTML = '';
 
             if (registros.length === 0) {
@@ -267,8 +267,8 @@
                 return;
             }
 
-            for (var i = 0; i < registros.length; i++) {
-                var registro = registros[i];
+            for (let i = 0; i < registros.length; i++) {
+                let registro = registros[i];
 
                 lista.innerHTML += `
                     <article class="record-item">

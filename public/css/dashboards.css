@@ -39,21 +39,18 @@ body {
 
 .dash-right .avisos .div-form input {
   width: 95%;
-  border-radius: 5px;
 }
 
 .dash-right .avisos .div-form textarea {
   width: 95%;
   border: 3px solid #e6005a;
   background-color: white;
-  border-radius: 5px;
 }
 
 .dash-right .avisos .div-form button {
   cursor: pointer;
   font-family: 'Barlow', 'Segoe UI', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   border: 0;
-  border-radius: 5px;
   font-weight: 600;
   font-size: 18px;
   padding: 10px 15px;
@@ -66,7 +63,6 @@ body {
   cursor: pointer;
   font-family: 'Barlow', 'Segoe UI', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   border: 0;
-  border-radius: 5px;
   font-weight: 600;
   font-size: 14px;
   padding: 5px 8px;
@@ -96,7 +92,6 @@ body {
 
 .div-results .feed-container {
   background-color: #212124;
-  border-radius: 5px;
   margin-bottom: 80px;
 }
 
@@ -254,7 +249,6 @@ body {
 .cor-alerta {
   width: 13%;
   height: 30%;
-  border-radius: 50%;
   display: inline-block;
 }
 
@@ -288,7 +282,6 @@ body {
   color: #e6005a;
   background-color: white;
   margin: 5px;
-  border-radius: 3px;
   cursor: pointer
 }
 
@@ -387,7 +380,6 @@ canvas {
   width: 40%;
   color: white;
   background-color: #e6005a;
-  border-radius: 5px;
   text-align: center;
   padding: 2% 5%;
 }
@@ -396,7 +388,6 @@ canvas {
   width: 40%;
   background-color: white;
   border: 3px solid #e6005a;
-  border-radius: 5px;
   text-align: center;
   padding: 2% 5%;
 }
@@ -419,7 +410,6 @@ canvas {
   width: 20%;
   background-color: #32b9cd;
   color: white;
-  border-radius: 10px;
   text-align: center;
   padding: 10px 15px;
   margin-bottom: 100px;
@@ -924,10 +914,9 @@ canvas {
 .bestiario-page .search-field input {
   width: 100%;
   box-sizing: border-box;
-  height: 42px;
+  height: 48px;
   background: #090909;
   border: 1px solid rgba(46, 240, 183, 0.14);
-  border-radius: 5px;
   color: #f5f5f5;
   padding: 0 14px;
   font-family: 'Exo 2', sans-serif;
@@ -1096,11 +1085,10 @@ canvas {
 
 .history-page .history-search-field input,
 .history-page .history-date-field input {
-  height: 42px;
+  height: 48px;
   box-sizing: border-box;
   background: #090909;
   border: 1px solid rgba(46, 240, 183, 0.14);
-  border-radius: 5px;
   color: #f5f5f5;
   padding: 0 14px;
   font-family: 'Exo 2', sans-serif;
@@ -1236,19 +1224,40 @@ canvas {
 
 .avistamento-page .avistamento-field select,
 .avistamento-page .avistamento-field input {
-  height: 42px;
+  height: 48px;
   box-sizing: border-box;
   background: #090909;
   border: 1px solid rgba(46, 240, 183, 0.14);
-  border-radius: 5px;
   color: #f5f5f5;
   padding: 0 14px;
   font-family: 'Exo 2', sans-serif;
   font-size: 18px;
 }
 
+.avistamento-page .avistamento-field input[type='date'] {
+  color-scheme: dark;
+}
+
+.avistamento-page .avistamento-field input[type='date']::-webkit-calendar-picker-indicator {
+  filter: invert(1) brightness(0.7);
+  cursor: pointer;
+}
+
+.avistamento-page .avistamento-field input[type='date']::-webkit-datetime-edit {
+  color: #4f4f4f;
+}
+
+.avistamento-page .avistamento-field input[type='date']:focus::-webkit-datetime-edit {
+  color: #f5f5f5;
+}
+
 .avistamento-page .avistamento-field select {
   appearance: none;
+}
+
+.avistamento-page .avistamento-field select,
+.avistamento-page .avistamento-field input[type='date'] {
+  min-height: 48px;
 }
 
 .avistamento-page .avistamento-field select::placeholder,
@@ -1264,7 +1273,7 @@ canvas {
 
 .avistamento-page .avistamento-submit {
   width: 170px;
-  min-height: 46px;
+  min-height: 48px;
   border: 0;
   background: #2ef0b7;
   color: #050505;

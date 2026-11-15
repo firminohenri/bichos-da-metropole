@@ -57,7 +57,7 @@
                     <div class="avistamento-grid">
                         <label class="avistamento-field">
                             <span>Data do avistamento</span>
-                            <input id="dataAvistamento" type="text" placeholder="dd/mm/aa">
+                            <input id="dataAvistamento" type="date">
                         </label>
 
                         <label class="avistamento-field">
@@ -73,7 +73,7 @@
     </div>
 
     <script>
-        var especies = [];
+        let especies = [];
 
         function carregarEspecies() {
             fetch('/especies/listar', { cache: 'no-store' }).then(function (response) {
@@ -91,19 +91,19 @@
         }
 
         function preencherSelect() {
-            var select = document.getElementById('especieEncontrada');
+            let select = document.getElementById('especieEncontrada');
 
-            for (var i = 0; i < especies.length; i++) {
-                var especie = especies[i];
+            for (let i = 0; i < especies.length; i++) {
+                let especie = especies[i];
                 select.innerHTML += `<option value="${especie.id}">${especie.nomePopular} - ${especie.nomeCientifico}</option>`;
             }
         }
 
         function registrarAvistamento() {
-            var idUsuario = sessionStorage.ID_USUARIO;
-            var fkEspecie = document.getElementById('especieEncontrada').value;
-            var data = document.getElementById('dataAvistamento').value.trim();
-            var local = document.getElementById('localAvistamento').value.trim();
+            let idUsuario = sessionStorage.ID_USUARIO;
+            let fkEspecie = document.getElementById('especieEncontrada').value;
+            let data = document.getElementById('dataAvistamento').value.trim();
+            let local = document.getElementById('localAvistamento').value.trim();
 
             if (!fkEspecie || !data || !local) {
                 window.alert('Preencha espécie, data e local para continuar.');

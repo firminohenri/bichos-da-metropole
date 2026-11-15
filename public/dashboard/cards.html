@@ -76,11 +76,11 @@
     </div>
 
     <script>
-        var filtroAtual = 'todos';
-        var especies = [];
+        let filtroAtual = 'todos';
+        let especies = [];
 
         function carregarBestiario() {
-            var idUsuario = sessionStorage.ID_USUARIO;
+            let idUsuario = sessionStorage.ID_USUARIO;
 
             fetch(`/especies/bestiario/${idUsuario}`, { cache: 'no-store' }).then(function (response) {
                 if (response.ok) {
@@ -98,16 +98,16 @@
         }
 
         function atualizarResumoBestiario() {
-            var totalCatalogo = especies.length;
-            var totalEspecies = 0;
+            let totalCatalogo = especies.length;
+            let totalEspecies = 0;
 
-            for (var i = 0; i < especies.length; i++) {
+            for (let i = 0; i < especies.length; i++) {
                 if (especies[i].status === 'descoberto') {
                     totalEspecies++;
                 }
             }
 
-            var progresso = totalCatalogo > 0 ? Math.round((totalEspecies / totalCatalogo) * 100) : 0;
+            let progresso = totalCatalogo > 0 ? Math.round((totalEspecies / totalCatalogo) * 100) : 0;
 
             document.getElementById('especiesDescobertasTexto').textContent = totalEspecies;
             document.getElementById('totalCatalogoTexto').textContent = totalCatalogo;
@@ -118,12 +118,12 @@
         function selecionarFiltro(filtro) {
             filtroAtual = filtro;
 
-            var botoes = document.querySelectorAll('.tab-filter');
-            for (var i = 0; i < botoes.length; i++) {
+            let botoes = document.querySelectorAll('.tab-filter');
+            for (let i = 0; i < botoes.length; i++) {
                 botoes[i].classList.remove('active');
             }
 
-            var botaoAtivo = document.querySelector('.tab-filter[data-filter="' + filtro + '"]');
+            let botaoAtivo = document.querySelector('.tab-filter[data-filter="' + filtro + '"]');
             if (botaoAtivo) {
                 botaoAtivo.classList.add('active');
             }
@@ -132,14 +132,14 @@
         }
 
         function renderizarEspecies() {
-            var busca = document.getElementById('buscarEspecie').value.toLowerCase().trim();
-            var grid = document.getElementById('speciesGrid');
+            let busca = document.getElementById('buscarEspecie').value.toLowerCase().trim();
+            let grid = document.getElementById('speciesGrid');
             grid.innerHTML = '';
 
-            for (var i = 0; i < especies.length; i++) {
-                var especie = especies[i];
-                var combinaFiltro = filtroAtual === 'todos' || especie.status === filtroAtual;
-                var combinaBusca = especie.nomePopular.toLowerCase().indexOf(busca) !== -1 || especie.nomeCientifico.toLowerCase().indexOf(busca) !== -1 || especie.grupo.toLowerCase().indexOf(busca) !== -1;
+            for (let i = 0; i < especies.length; i++) {
+                let especie = especies[i];
+                let combinaFiltro = filtroAtual === 'todos' || especie.status === filtroAtual;
+                let combinaBusca = especie.nomePopular.toLowerCase().indexOf(busca) !== -1 || especie.nomeCientifico.toLowerCase().indexOf(busca) !== -1 || especie.grupo.toLowerCase().indexOf(busca) !== -1;
 
                 if (!combinaFiltro || !combinaBusca) {
                     continue;
@@ -172,7 +172,7 @@
         }
 
         function obterImagemPadrao(nomePopular) {
-            var iniciais = nomePopular.split(' ').map(function (parte) {
+            let iniciais = nomePopular.split(' ').map(function (parte) {
                 return parte.charAt(0);
             }).join('').substring(0, 2).toUpperCase();
 
