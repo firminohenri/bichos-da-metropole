@@ -55,18 +55,9 @@
             <section class="history-filters" aria-label="Filtros de histórico">
                 <label class="history-search-field" for="buscarHistorico">
                     <span>Buscar</span>
-                    <input id="buscarHistorico" type="search" placeholder="Buscar animal registrado" oninput="renderizarHistorico()">
+                    <input id="buscarHistorico" type="search" placeholder="Buscar animal registrado" oninput="paginaHistoricoAtual = 1; renderizarHistorico()">
                 </label>
 
-                <label class="history-date-field" for="dataInicial">
-                    <span>De:</span>
-                    <input id="dataInicial" type="text" placeholder="dd/mm/aa" oninput="renderizarHistorico()">
-                </label>
-
-                <label class="history-date-field" for="dataFinal">
-                    <span>Até:</span>
-                    <input id="dataFinal" type="text" placeholder="dd/mm/aa" oninput="renderizarHistorico()">
-                </label>
             </section>
 
             <section class="history-records-card" aria-label="Registros do histórico">
@@ -76,12 +67,20 @@
                 </div>
 
                 <div class="history-list" id="historyList"></div>
+
+                <section class="pagination-bar" aria-label="Paginação do histórico">
+                    <button class="pagination-button" type="button" id="btnHistoricoAnterior" onclick="mudarPaginaHistorico(-1)">Anterior</button>
+                    <span class="pagination-info" id="paginationHistoricoInfo">Página 1 de 1</span>
+                    <button class="pagination-button" type="button" id="btnHistoricoProxima" onclick="mudarPaginaHistorico(1)">Próxima</button>
+                </section>
             </section>
         </main>
     </div>
 
     <script>
         var registrosHistorico = [];
+        var paginaHistoricoAtual = 1;
+        var itensHistoricoPorPagina = 3;
 
         function carregarHistorico() {
             var idUsuario = sessionStorage.ID_USUARIO;
@@ -90,11 +89,13 @@
                 if (response.status == 204) {
                     registrosHistorico = [];
                     document.getElementById('totalAvistamentos').textContent = '0';
+                    paginaHistoricoAtual = 1;
                     renderizarHistorico();
                 } else if (response.ok) {
                     response.json().then(function (resultado) {
                         registrosHistorico = resultado;
                         document.getElementById('totalAvistamentos').textContent = resultado.length;
+                        paginaHistoricoAtual = 1;
                         renderizarHistorico();
                     });
                 } else {
@@ -107,72 +108,98 @@
 
         function renderizarHistorico() {
             var busca = document.getElementById('buscarHistorico').value.toLowerCase().trim();
-            var dataInicial = document.getElementById('dataInicial').value.trim();
-            var dataFinal = document.getElementById('dataFinal').value.trim();
-            var dataInicialIso = converterDataFiltroParaIso(dataInicial);
-            var dataFinalIso = converterDataFiltroParaIso(dataFinal);
             var lista = document.getElementById('historyList');
             lista.innerHTML = '';
 
-            var exibidos = 0;
+            var registrosFiltrados = [];
 
             for (var i = 0; i < registrosHistorico.length; i++) {
                 var registro = registrosHistorico[i];
                 var combinaBusca = registro.nomePopular.toLowerCase().indexOf(busca) !== -1 || registro.nomeCientifico.toLowerCase().indexOf(busca) !== -1 || registro.localAvistamento.toLowerCase().indexOf(busca) !== -1 || registro.grupo.toLowerCase().indexOf(busca) !== -1;
-                var registroIso = converterDataParaFiltro(registro.dataAvistamento);
-                var combinaInicio = !dataInicialIso || registroIso >= dataInicialIso;
-                var combinaFim = !dataFinalIso || registroIso <= dataFinalIso;
-
-                if (!combinaBusca || !combinaInicio || !combinaFim) {
+                if (!combinaBusca) {
                     continue;
                 }
 
-                exibidos++;
+                registrosFiltrados.push(registro);
+            }
+
+            var totalPaginas = registrosFiltrados.length > 0 ? Math.ceil(registrosFiltrados.length / itensHistoricoPorPagina) : 1;
+
+            if (paginaHistoricoAtual > totalPaginas) {
+                paginaHistoricoAtual = totalPaginas;
+            }
+
+            var inicio = (paginaHistoricoAtual - 1) * itensHistoricoPorPagina;
+            var fim = inicio + itensHistoricoPorPagina;
+            var registrosDaPagina = registrosFiltrados.slice(inicio, fim);
+
+            for (var j = 0; j < registrosDaPagina.length; j++) {
+                var registroPagina = registrosDaPagina[j];
 
                 lista.innerHTML += `
                     <article class="history-item">
                         <div class="history-item-main">
-                            <h3>${registro.nomePopular}</h3>
-                            <p>${registro.nomeCientifico}</p>
-                            <span>${registro.localAvistamento}</span>
+                            <h3>${registroPagina.nomePopular}</h3>
+                            <p>${registroPagina.nomeCientifico}</p>
+                            <span>${registroPagina.localAvistamento}</span>
                         </div>
                         <div class="history-item-meta">
-                            <strong>${registro.dataAvistamento}</strong>
-                            <span>${registro.grupo}</span>
+                            <strong>${registroPagina.dataAvistamento}</strong>
+                            <span>${registroPagina.grupo}</span>
                         </div>
                     </article>
                 `;
             }
 
-            document.getElementById('registrosExibidos').textContent = exibidos + ' exibidos';
+            document.getElementById('registrosExibidos').textContent = registrosFiltrados.length + ' exibidos';
+            atualizarPaginacaoHistorico(registrosFiltrados.length, totalPaginas);
         }
 
-        function converterDataParaFiltro(dataBr) {
-            if (dataBr == undefined || dataBr.indexOf('/') === -1) {
-                return '';
+        function mudarPaginaHistorico(direcao) {
+            var totalPaginas = obterQuantidadePaginasHistorico();
+            var proximaPagina = paginaHistoricoAtual + direcao;
+
+            if (proximaPagina < 1 || proximaPagina > totalPaginas) {
+                return;
             }
 
-            var partes = dataBr.split('/');
-            return `${partes[2]}-${partes[1]}-${partes[0]}`;
+            paginaHistoricoAtual = proximaPagina;
+            renderizarHistorico();
         }
 
-        function converterDataFiltroParaIso(dataBr) {
-            if (dataBr == undefined || dataBr.trim() === '' || dataBr.indexOf('/') === -1) {
-                return '';
+        function obterQuantidadePaginasHistorico() {
+            var busca = document.getElementById('buscarHistorico').value.toLowerCase().trim();
+            var totalFiltrado = 0;
+
+            for (var i = 0; i < registrosHistorico.length; i++) {
+                var registro = registrosHistorico[i];
+                var combinaBusca = registro.nomePopular.toLowerCase().indexOf(busca) !== -1 || registro.nomeCientifico.toLowerCase().indexOf(busca) !== -1 || registro.localAvistamento.toLowerCase().indexOf(busca) !== -1 || registro.grupo.toLowerCase().indexOf(busca) !== -1;
+                if (combinaBusca) {
+                    totalFiltrado++;
+                }
             }
 
-            var partes = dataBr.split('/');
-
-            if (partes.length != 3) {
-                return '';
-            }
-
-            var ano = partes[2].length === 2 ? '20' + partes[2] : partes[2];
-            var mes = partes[1].padStart(2, '0');
-            var dia = partes[0].padStart(2, '0');
-
-            return `${ano}-${mes}-${dia}`;
+            return totalFiltrado > 0 ? Math.ceil(totalFiltrado / itensHistoricoPorPagina) : 1;
         }
+
+        function atualizarPaginacaoHistorico(totalItens, totalPaginas) {
+            var info = document.getElementById('paginationHistoricoInfo');
+            var btnAnterior = document.getElementById('btnHistoricoAnterior');
+            var btnProxima = document.getElementById('btnHistoricoProxima');
+
+            if (totalItens === 0) {
+                info.textContent = 'Nenhum resultado encontrado';
+            } else {
+                info.textContent = 'Página ' + paginaHistoricoAtual + ' de ' + totalPaginas;
+            }
+
+            btnAnterior.disabled = paginaHistoricoAtual <= 1;
+            btnProxima.disabled = paginaHistoricoAtual >= totalPaginas;
+
+            btnAnterior.classList.toggle('disabled', btnAnterior.disabled);
+            btnProxima.classList.toggle('disabled', btnProxima.disabled);
+        }
+
     </script>
 </body>
 
