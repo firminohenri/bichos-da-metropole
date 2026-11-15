@@ -436,7 +436,7 @@ canvas {
 }
 
 .dashboard-page {
-  background-color: #050505;
+  background-color: #000000;
   color: #f2f2f2;
 }
 
@@ -501,7 +501,7 @@ canvas {
   text-transform: uppercase;
   padding: 0.8125rem 0.875rem;
   border: 0;
-  background: linear-gradient(90deg, #2ef0b7 0%, #2ef0b7 100%);
+  background: linear-gradient(90deg, #1EFEAA 0%, #1EFEAA 100%);
   background-repeat: no-repeat;
   background-size: 0% 100%;
   background-position: left center;
@@ -509,7 +509,7 @@ canvas {
 }
 
 .dashboard-page .dashboard-nav-item.active {
-  background: #2ef0b7;
+  background: #1EFEAA;
   color: #050505;
   background-size: 100% 100%;
 }
@@ -519,7 +519,7 @@ canvas {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  background: #2ef0b7;
+  background: #1EFEAA;
   color: #050505;
   font-family: 'ChakraPetchCustom', 'Exo 2', sans-serif;
   font-size: 1rem;
@@ -536,7 +536,7 @@ canvas {
 .dashboard-page .stat-cta-button {
   border: 0;
   color: #050505;
-  background-color: #2ef0b7;
+  background-color: #1EFEAA;
 }
 
 .dashboard-page .stat-cta-button::before {
@@ -569,7 +569,7 @@ canvas {
 
 .dashboard-page .dashboard-action {
   border: 0;
-  background-color: #2ef0b7;
+  background-color: #1EFEAA;
   color: #050505;
   overflow: hidden;
   position: relative;
@@ -620,7 +620,7 @@ canvas {
   flex: 1 1 40rem;
   min-width: 0;
   padding: 1.375rem 1.75rem 1.75rem;
-  background: #050505;
+  background: #000000;
   box-sizing: border-box;
   overflow-x: hidden;
 }
@@ -671,7 +671,7 @@ canvas {
   min-width: 92px;
   height: 42px;
   padding: 0 18px;
-  background: #2ef0b7;
+  background: #1EFEAA;
   color: #050505;
   border: 0;
   position: relative;
@@ -734,7 +734,7 @@ canvas {
 }
 
 .dashboard-page .stat-value {
-  color: #2ef0b7;
+  color: #1EFEAA;
   font-family: 'ChakraPetchCustom', 'Exo 2', sans-serif;
   font-size: 3.5rem;
   font-weight: 700;
@@ -764,7 +764,7 @@ canvas {
 .dashboard-page .chart-card,
 .dashboard-page .records-card {
   border: 1px solid rgba(46, 240, 183, 0.22);
-  background: #060606;
+  background: transparent;
   padding: 18px;
   box-sizing: border-box;
 }
@@ -793,8 +793,12 @@ canvas {
   font-weight: 700;
 }
 
-.dashboard-page .progress-header strong span {
-  color: #2ef0b7;
+.dashboard-page .progress-header strong .progress-count.discovered {
+  color: #1EFEAA;
+}
+
+.dashboard-page .progress-header strong .progress-count.total {
+  color: #f5f5f5;
 }
 
 .dashboard-page .progress-track {
@@ -807,7 +811,7 @@ canvas {
 .dashboard-page .progress-fill {
   height: 100%;
   width: 0;
-  background: #2ef0b7;
+  background: #1EFEAA;
 }
 
 .dashboard-page .progress-caption {
@@ -856,7 +860,7 @@ canvas {
 }
 
 .dashboard-page .records-header a {
-  color: #2ef0b7;
+  color: #1EFEAA;
   font-size: 1rem;
   font-weight: 700;
 }
@@ -951,27 +955,30 @@ canvas {
   display: flex;
   flex-wrap: wrap;
   gap: 1rem;
+  justify-content: space-between;
 }
 
 .bestiario-page .tab-filter {
-  flex: 1 1 10rem;
-  min-width: 10rem;
-  height: 2.625rem;
+  flex: 1 1 0;
+  min-width: 0;
+  height: 2.75rem;
   border: 0;
   background: #121212;
-  background-image: linear-gradient(90deg, #2ef0b7 0%, #2ef0b7 100%);
+  background-image: linear-gradient(90deg, #1EFEAA 0%, #1EFEAA 100%);
   background-repeat: no-repeat;
   background-size: 0% 100%;
   background-position: left center;
   color: #dcdcdc;
   font-family: 'Exo 2', sans-serif;
   font-size: 1.125rem;
+  text-align: center;
+  padding: 0.25rem 0.5rem;
   cursor: pointer;
   transition: background-size 0.32s ease, color 0.32s ease;
 }
 
 .bestiario-page .tab-filter.active {
-  background: #2ef0b7;
+  background: #1EFEAA;
   color: #050505;
   background-size: 100% 100%;
   font-weight: 700;
@@ -993,9 +1000,23 @@ canvas {
   flex: 0 0 calc((100% - 2.25rem) / 3);
   width: calc((100% - 2.25rem) / 3);
   min-width: 0;
-  border: 1px solid rgba(46, 240, 183, 0.18);
-  background: #070707;
+  box-sizing: border-box;
+  border: 1px solid #121212;
+  background: transparent;
   overflow: hidden;
+}
+
+.bestiario-page .species-card.descoberto {
+  border-color: #1EFEAA;
+}
+
+.bestiario-page .species-card.pendente {
+  border-color: #121212;
+}
+
+.bestiario-page .species-card:hover {
+  transform: none;
+  filter: none;
 }
 
 .bestiario-page .species-image-wrap {
@@ -1021,7 +1042,7 @@ canvas {
   position: absolute;
   top: 0.625rem;
   right: 0.625rem;
-  background: #2ef0b7;
+  background: #1EFEAA;
   color: #050505;
   font-size: 0.6875rem;
   font-weight: 700;
@@ -1036,6 +1057,7 @@ canvas {
 
 .bestiario-page .species-content {
   padding: 0.625rem 0.75rem 0.75rem;
+  background: transparent;
 }
 
 .bestiario-page .species-title-row {
@@ -1075,7 +1097,7 @@ canvas {
   min-width: 6.875rem;
   height: 2.625rem;
   border: 0;
-  background: #2ef0b7;
+  background: #1EFEAA;
   color: #050505;
   font-family: 'ChakraPetchCustom', 'Exo 2', sans-serif;
   font-size: 1rem;
@@ -1137,7 +1159,7 @@ canvas {
 .history-page .history-total {
   display: inline-block;
   margin-top: 0.75rem;
-  color: #2ef0b7;
+  color: #1EFEAA;
   font-family: 'ChakraPetchCustom', 'Exo 2', sans-serif;
   font-size: 3.375rem;
   font-weight: 700;
@@ -1186,7 +1208,7 @@ canvas {
 
 .history-page .history-records-card {
   border: 1px solid rgba(46, 240, 183, 0.22);
-  background: #060606;
+  background: transparent;
   padding: 1.125rem;
   box-sizing: border-box;
 }
@@ -1200,7 +1222,7 @@ canvas {
 }
 
 .history-page .history-header span {
-  color: #2ef0b7;
+  color: #1EFEAA;
   font-weight: 700;
 }
 
@@ -1275,7 +1297,7 @@ canvas {
   min-width: 6.875rem;
   height: 2.625rem;
   border: 0;
-  background: #2ef0b7;
+  background: #1EFEAA;
   color: #050505;
   font-family: 'ChakraPetchCustom', 'Exo 2', sans-serif;
   font-size: 1rem;
@@ -1418,7 +1440,7 @@ canvas {
   max-width: 15rem;
   min-height: 3rem;
   border: 0;
-  background: #2ef0b7;
+  background: #1EFEAA;
   color: #050505;
   display: inline-flex;
   align-items: center;
