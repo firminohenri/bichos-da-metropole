@@ -6,9 +6,8 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AquaTech | Página Inicial</title>
+    <title>Bichos da Metrópole | Novo Avistamento</title>
 
-    
     <link rel="stylesheet" href="./../css/dashboards.css">
     <link rel="stylesheet" href="./../css/estilo.css" />
     <script src="../js/sessao.js"></script>
@@ -19,112 +18,78 @@
         rel="stylesheet">
 </head>
 
-<body onload="validarSessao(), listarInfosDeUm()" style="background-color: #161618;">
-    <!-- <body onload="validarSessao()"> -->
+<body class="dashboard-page avistamento-page" onload="validarSessao()">
+    <div class="dashboard-shell">
+        <aside class="dashboard-sidebar">
+            <a class="dashboard-brand" href="./dashboard.html" aria-label="Bichos da Metrópole - Dashboard">
+                <img src="../assets/assets-home/Bichos da Metrópole em Pixel Art 1.png" alt="Bichos da Metrópole">
+            </a>
 
-    <div class="janela">
+            <nav class="dashboard-nav" aria-label="Navegação principal">
+                <a class="dashboard-nav-item" href="./dashboard.html">Dashboard</a>
+                <a class="dashboard-nav-item" href="./cards.html">Meu Bestiário</a>
+                <a class="dashboard-nav-item" href="./mural.html">Histórico</a>
+            </nav>
 
+            <a class="dashboard-action active-action" href="./edicao-aviso.html"><span>Registrar avistamento</span></a>
 
-        <div class="header-left">
+            <span id="b_usuario" class="usuario-invisivel" aria-hidden="true">usuário</span>
+        </aside>
 
-            <h1>AquaTech</h1>
+        <main class="dashboard-main">
+            <header class="dashboard-header">
+                <h1>NOVO AVISTAMENTO</h1>
+                <p>Registre o animal que acabou de visualizar.</p>
+            </header>
 
-            <div class="hello">
-                <h3>Olá, <span id="b_usuario">usuário</span>!</h3>
-            </div>
+            <section class="avistamento-form-card" aria-label="Formulário de avistamento">
+                <form class="avistamento-form" onsubmit="return registrarAvistamento()">
+                    <label class="avistamento-field field-full">
+                        <span>Espécie encontrada</span>
+                        <select id="especieEncontrada">
+                            <option value="" selected disabled>Selecione uma espécie do catálogo</option>
+                            <option value="bem-te-vi">Bem-te-vi</option>
+                            <option value="capivara">Capivara</option>
+                            <option value="sabia-laranjeira">Sabiá-laranjeira</option>
+                            <option value="tucano-bico-verde">Tucano-bico-verde</option>
+                            <option value="gamba">Gambá</option>
+                            <option value="coruja-buraqueira">Coruja-buraqueira</option>
+                        </select>
+                    </label>
 
-            <div class="btn-nav-white">
-                <a href="cards.html">
-                    <h3>Aquários e Terrários</h3>
-                </a>
-            </div>
-
-            <div class="btn-nav-white">
-                <a href="./dashboard.html">
-                    <h3>Gráficos</h3>
-                </a>
-            </div>
-
-            <div class="btn-nav-white">
-                <a href="./mural.html">
-                    <h3>Mural de Avisos</h3>
-                </a>
-            </div>
-
-            <div class="btn-logout" onclick="limparSessao()">
-                <h3>Sair</h3>
-            </div>
-
-        </div>
-
-        <div class="dash-right">
-
-            <div class="avisos">
-                <div class="container">
-                    <h1>Editar um aviso</h1>
-                    <div class="div-form">
-                        <label>
-                            ID:
-                            <br>
-                            <input id="input_id" maxlength="100" type="text" style="color: rgb(196, 196, 196)" disabled>
+                    <div class="avistamento-grid">
+                        <label class="avistamento-field">
+                            <span>Data do avistamento</span>
+                            <input id="dataAvistamento" type="text" placeholder="dd/mm/aa">
                         </label>
-                        <label>
-                            Autor:
-                            <br>
-                            <input id="input_nome" maxlength="100" type="text" style="color: rgb(196, 196, 196)"
-                                disabled>
+
+                        <label class="avistamento-field">
+                            <span>Local do avistamento</span>
+                            <input id="localAvistamento" type="text" placeholder="Ex: Parque Villa-Lobos">
                         </label>
-                        <label>
-                            Título:
-                            <br>
-                            <input id="input_titulo" maxlength="100" type="text" style="color: rgb(196, 196, 196)"
-                                disabled>
-                        </label>
-                        <br>
-                        <label>
-                            Descrição (máximo de 250 caracteres):
-                            <br>
-                            <textarea id="textarea_descricao" maxlength="250" rows="5"></textarea>
-                        </label>
-                        <br>
-                        <button onclick="editar()">Editar</button>
                     </div>
 
-                </div>
-            </div>
-        </div>
+                    <button class="avistamento-submit" type="submit">Registrar avistamento</button>
+                </form>
+            </section>
+        </main>
     </div>
+
+    <script>
+        function registrarAvistamento() {
+            var especie = document.getElementById('especieEncontrada').value;
+            var data = document.getElementById('dataAvistamento').value.trim();
+            var local = document.getElementById('localAvistamento').value.trim();
+
+            if (!especie || !data || !local) {
+                window.alert('Preencha espécie, data e local para continuar.');
+                return false;
+            }
+
+            window.alert('Avistamento registrado na interface. A integração com o backend será ligada na próxima etapa.');
+            return false;
+        }
+    </script>
 </body>
 
 </html>
-
-<script>
-    function listarInfosDeUm() {
-        console.log("Criar função de trazer informações de post escolhido");
-    }
-
-    function editar() {
-        fetch(`/avisos/editar/${sessionStorage.getItem("ID_POSTAGEM_EDITANDO")}`, {
-            method: "PUT",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify({
-                descricao: textarea_descricao.value
-            })
-        }).then(function (resposta) {
-
-            if (resposta.ok) {
-                window.alert("Post atualizado com sucesso pelo usuario de email: " + sessionStorage.getItem("EMAIL_USUARIO") + "!");
-                window.location = "/dashboard/mural.html"
-            } else if (resposta.status == 404) {
-                window.alert("Deu 404!");
-            } else {
-                throw ("Houve um erro ao tentar realizar a postagem! Código da resposta: " + resposta.status);
-            }
-        }).catch(function (resposta) {
-            console.log(`#ERRO: ${resposta}`);
-        });
-    }
-
-</script>

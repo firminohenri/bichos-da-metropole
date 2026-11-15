@@ -6,115 +6,184 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AquaTech | Tempo Real</title>
-
+    <title>Bichos da Metrópole | Meu Bestiário</title>
 
     <link rel="stylesheet" href="./../css/dashboards.css">
     <link rel="stylesheet" href="./../css/estilo.css" />
-
     <script src="../js/sessao.js"></script>
-    <script src="../js/alerta.js"></script>
+
     <link rel="preconnect" href="https://fonts.gstatic.com">
     <link
         href="https://fonts.googleapis.com/css2?family=Exo+2:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap"
         rel="stylesheet">
 </head>
 
-<body onload="validarSessao(), exibirAquarios(),  atualizacaoPeriodica()">
+<body class="dashboard-page bestiario-page" onload="validarSessao(), iniciarBestiario()">
+    <div class="dashboard-shell">
+        <aside class="dashboard-sidebar">
+            <a class="dashboard-brand" href="./dashboard.html" aria-label="Bichos da Metrópole - Dashboard">
+                <img src="../assets/assets-home/Bichos da Metrópole em Pixel Art 1.png" alt="Bichos da Metrópole">
+            </a>
 
-    <div class="janela">
+            <nav class="dashboard-nav" aria-label="Navegação principal">
+                <a class="dashboard-nav-item" href="./dashboard.html">Dashboard</a>
+                <a class="dashboard-nav-item active" href="./cards.html">Meu Bestiário</a>
+                <a class="dashboard-nav-item" href="./mural.html">Histórico</a>
+            </nav>
 
-        <div class="header-left dash-header">
+            <a class="dashboard-action" href="./edicao-aviso.html"><span>Registrar avistamento</span></a>
 
-            <h1>AquaTech</h1>
+            <span id="b_usuario" class="usuario-invisivel" aria-hidden="true">usuário</span>
+        </aside>
 
-            <div class="hello">
-                <h3>Olá, <span id="b_usuario">usuário</span>!</h3>
-            </div>
+        <main class="dashboard-main">
+            <header class="dashboard-header">
+                <h1>MEU BESTIÁRIO</h1>
+                <p>Explore sua coleção de espécies da cidade.</p>
+            </header>
 
-            <div class="btn-nav">
-                <h3>Aquários e Terrários</h3>
-            </div>
-
-            <div class="btn-nav-white">
-                <a href="./dashboard.html">
-                    <h3>Gráficos</h3>
-                </a>
-            </div>
-
-            <div class="btn-nav-white">
-                <a href="./mural.html">
-                    <h3>Mural de Avisos</h3>
-                </a>
-            </div>
-
-            <div class="btn-logout" onclick="limparSessao()">
-                <h3>Sair</h3>
-            </div>
-
-        </div>
-
-        <div class="dash">
-            <div id="alerta">
-            </div>
-            <div class="area-parametros-alerta">
-                <p class="titulo-legenda">
-                    Legenda - Parâmetros para Alertas
-                </p>
-                <div class="parametros-alerta">
-                    <div class="item-regua perigo-frio">
-                        <p>Perigo</p>
-                        <p>&lt;=5°C</p>
-                    </div>
-                    <div class="item-regua alerta-frio">
-                        <p>Alerta</p>
-                        <p>&lt;=10°C</p>
-                    </div>
-                    <div class="item-regua ideal">
-                        <p>Ideal</p>
-                        <p>20°C</p>
-                    </div>
-                    <div class="item-regua alerta-quente">
-                        <p>Alerta</p>
-                        <p>&gt;=22°C</p>
-                    </div>
-                    <div class="item-regua perigo-quente">
-                        <p>Perigo</p>
-                        <p>&gt;=23°C</p>
-                    </div>
+            <section class="progress-card bestiario-progress" aria-label="Progresso da coleção">
+                <div class="progress-header">
+                    <h2>PROGRESSO DA COLEÇÃO</h2>
+                    <strong><span id="especiesDescobertasTexto">12</span> / <span id="totalCatalogoTexto">40</span> espécies descobertas</strong>
                 </div>
-            </div>
 
-            <div class="cards" id="cardAquarios">
+                <div class="progress-track" aria-hidden="true">
+                    <div class="progress-fill" id="progressFill"></div>
+                </div>
 
-            </div>
+                <p class="progress-caption"><strong id="progressPercent">30%</strong> do catálogo já descoberto</p>
+            </section>
 
-        </div>
+            <section class="search-section" aria-label="Busca e filtros">
+                <label class="search-field" for="buscarEspecie">
+                    <span class="usuario-invisivel">Buscar espécie</span>
+                    <input id="buscarEspecie" type="search" placeholder="Buscar espécie" oninput="filtrarEspecies()">
+                </label>
 
+                <div class="tabs-filter" role="tablist" aria-label="Filtro de espécies">
+                    <button class="tab-filter active" type="button" data-filter="todos" onclick="selecionarFiltro('todos')">Todos</button>
+                    <button class="tab-filter" type="button" data-filter="descobertos" onclick="selecionarFiltro('descobertos')">Descobertos</button>
+                    <button class="tab-filter" type="button" data-filter="pendentes" onclick="selecionarFiltro('pendentes')">Pendentes</button>
+                </div>
+            </section>
+
+            <section class="species-grid" id="speciesGrid" aria-label="Coleção de espécies"></section>
+        </main>
     </div>
 
+    <script>
+        var filtroAtual = 'todos';
+        var especies = [
+            {
+                nome: 'Bem-te-vi',
+                cientifico: 'Pitangus sulphuratus',
+                grupo: 'Ave',
+                imagem: '../assets/assets-home/bentevi.png',
+                status: 'descoberto'
+            },
+            {
+                nome: 'Capivara',
+                cientifico: 'Hydrochoerus hydrochaeris',
+                grupo: 'Mamífero',
+                imagem: '../assets/assets-bestiario/capybara_PNG8 1.png',
+                status: 'descoberto'
+            },
+            {
+                nome: 'Sabiá-laranjeira',
+                cientifico: 'Turdus rufiventris',
+                grupo: 'Ave',
+                imagem: '../assets/assets-bestiario/sabia-laranjeira.png',
+                status: 'descoberto'
+            },
+            {
+                nome: 'Tucano-bico-verde',
+                cientifico: 'Ramphastos dicolorus',
+                grupo: 'Ave',
+                imagem: '../assets/assets-bestiario/tucano.png',
+                status: 'descoberto'
+            },
+            {
+                nome: 'Gambá',
+                cientifico: 'Didelphis aurita',
+                grupo: 'Mamífero',
+                imagem: '../assets/assets-bestiario/gamba.png',
+                status: 'pendente'
+            },
+            {
+                nome: 'Coruja-buraqueira',
+                cientifico: 'Athene cunicularia',
+                grupo: 'Ave',
+                imagem: '../assets/assets-bestiario/coruja.png',
+                status: 'pendente'
+            }
+        ];
+
+        function iniciarBestiario() {
+            var totalEspecies = 12;
+            var totalCatalogo = 40;
+            var progresso = Math.round((totalEspecies / totalCatalogo) * 100);
+
+            document.getElementById('especiesDescobertasTexto').textContent = totalEspecies;
+            document.getElementById('totalCatalogoTexto').textContent = totalCatalogo;
+            document.getElementById('progressPercent').textContent = progresso + '%';
+            document.getElementById('progressFill').style.width = progresso + '%';
+
+            renderizarEspecies();
+        }
+
+        function selecionarFiltro(filtro) {
+            filtroAtual = filtro;
+
+            var botoes = document.querySelectorAll('.tab-filter');
+            for (var i = 0; i < botoes.length; i++) {
+                botoes[i].classList.remove('active');
+            }
+
+            var botaoAtivo = document.querySelector('.tab-filter[data-filter="' + filtro + '"]');
+            if (botaoAtivo) {
+                botaoAtivo.classList.add('active');
+            }
+
+            renderizarEspecies();
+        }
+
+        function filtrarEspecies() {
+            renderizarEspecies();
+        }
+
+        function renderizarEspecies() {
+            var busca = document.getElementById('buscarEspecie').value.toLowerCase().trim();
+            var grid = document.getElementById('speciesGrid');
+            grid.innerHTML = '';
+
+            for (var i = 0; i < especies.length; i++) {
+                var especie = especies[i];
+                var combinaFiltro = filtroAtual === 'todos' || especie.status === filtroAtual;
+                var combinaBusca = especie.nome.toLowerCase().indexOf(busca) !== -1 || especie.cientifico.toLowerCase().indexOf(busca) !== -1 || especie.grupo.toLowerCase().indexOf(busca) !== -1;
+
+                if (!combinaFiltro || !combinaBusca) {
+                    continue;
+                }
+
+                grid.innerHTML += `
+                    <article class="species-card ${especie.status}">
+                        <div class="species-image-wrap">
+                            <img class="species-image" src="${especie.imagem}" alt="${especie.nome}">
+                            <span class="species-badge">${especie.status === 'descoberto' ? 'Descoberto' : 'Pendente'}</span>
+                        </div>
+                        <div class="species-content">
+                            <div class="species-title-row">
+                                <h3>${especie.nome}</h3>
+                                <span>${especie.grupo}</span>
+                            </div>
+                            <p>${especie.cientifico}</p>
+                        </div>
+                    </article>
+                `;
+            }
+        }
+    </script>
 </body>
-
-<script>
-
-    function exibirAquarios() {
-        JSON.parse(sessionStorage.AQUARIOS).forEach(item => {
-            document.getElementById("cardAquarios").innerHTML += `
-                    <div class="card-aquario">
-                        <div class="title-aquario">
-                            <h1>${item.descricao}</h1>
-                        </div>
-                        <div class="desc-aquario">
-                        <div class="temperatura">
-                            <p id="temp_aquario_${item.id}">-°C</p>
-                        </div>
-                        <div class="cor-alerta" id="card_${item.id}"></div>
-                    </div>
-                    </div>
-                    `
-        });
-    }
-
-</script>
 
 </html>

@@ -6,12 +6,11 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AquaTech | Avisos</title>
+    <title>Bichos da Metrópole | Histórico</title>
 
     <link rel="stylesheet" href="./../css/dashboards.css">
     <link rel="stylesheet" href="./../css/estilo.css" />
     <script src="../js/sessao.js"></script>
-    <script src="./../js/alerta.js"></script>
 
     <link rel="preconnect" href="https://fonts.gstatic.com">
     <link
@@ -19,232 +18,141 @@
         rel="stylesheet">
 </head>
 
-<body onload="validarSessao(), atualizarFeed()" style="background-color: #161618;">
+<body class="dashboard-page history-page" onload="validarSessao(), iniciarHistorico()">
+    <div class="dashboard-shell">
+        <aside class="dashboard-sidebar">
+            <a class="dashboard-brand" href="./dashboard.html" aria-label="Bichos da Metrópole - Dashboard">
+                <img src="../assets/assets-home/Bichos da Metrópole em Pixel Art 1.png" alt="Bichos da Metrópole">
+            </a>
 
-    <div class="janela">
+            <nav class="dashboard-nav" aria-label="Navegação principal">
+                <a class="dashboard-nav-item" href="./dashboard.html">Dashboard</a>
+                <a class="dashboard-nav-item" href="./cards.html">Meu Bestiário</a>
+                <a class="dashboard-nav-item active" href="./mural.html">Histórico</a>
+            </nav>
 
+            <a class="dashboard-action" href="./edicao-aviso.html"><span>Registrar avistamento</span></a>
 
-        <div class="header-left">
+            <span id="b_usuario" class="usuario-invisivel" aria-hidden="true">usuário</span>
+        </aside>
 
-            <h1>AquaTech</h1>
+        <main class="dashboard-main">
+            <header class="dashboard-header">
+                <h1>HISTÓRICO</h1>
+                <p>Consulte os animais que você encontrou pela cidade.</p>
+            </header>
 
-            <div class="hello">
-                <h3>Olá, <span id="b_usuario">usuário</span>!</h3>
-            </div>
+            <section class="history-summary" aria-label="Resumo do histórico">
+                <article class="history-total-card">
+                    <h2>TOTAL DE AVISTAMENTOS</h2>
+                    <span class="history-total" id="totalAvistamentos">28</span>
+                </article>
+            </section>
 
-            <div class="btn-nav-white">
-                <a href="cards.html">
-                    <h3>Aquários e Terrários</h3>
-                </a>
-            </div>
+            <section class="history-filters" aria-label="Filtros de histórico">
+                <label class="history-search-field" for="buscarHistorico">
+                    <span>Buscar</span>
+                    <input id="buscarHistorico" type="search" placeholder="Buscar animal registrado" oninput="renderizarHistorico()">
+                </label>
 
-            <div class="btn-nav-white">
-                <a href="./dashboard.html">
-                    <h3>Gráficos</h3>
-                </a>
-            </div>
+                <label class="history-date-field" for="dataInicial">
+                    <span>De:</span>
+                    <input id="dataInicial" type="text" placeholder="dd/mm/aa" oninput="renderizarHistorico()">
+                </label>
 
-            <div class="btn-nav">
-                <h3>Mural de Avisos</h3>
-            </div>
+                <label class="history-date-field" for="dataFinal">
+                    <span>Até:</span>
+                    <input id="dataFinal" type="text" placeholder="dd/mm/aa" oninput="renderizarHistorico()">
+                </label>
+            </section>
 
-            <div class="btn-logout" onclick="limparSessao()">
-                <h3>Sair</h3>
-            </div>
-
-        </div>
-
-        <div class="dash-right">
-
-
-            <div class="avisos">
-                <div id="alerta">
+            <section class="history-records-card" aria-label="Registros do histórico">
+                <div class="records-header history-header">
+                    <h2>MEUS REGISTROS</h2>
+                    <span id="registrosExibidos">4 exibidos</span>
                 </div>
-                <div class="container">
-                    <h1>Publicar um aviso</h1>
-                    <div class="div-form">
-                        <form id="form_postagem" method="post" onsubmit="return publicar()">
-                            <label>
-                                Título:
-                                <br>
-                                <input name="titulo" id="titulo" maxlength="100" type="text">
-                            </label>
-                            <br>
-                            <br>
-                            <label>
-                                Descrição (máximo de 250 caracteres):
-                                <br>
-                                <textarea name="descricao" id="textarea_descricao" maxlength="250" rows="5"></textarea>
-                            </label>
-                            <br>
-                            <br>
-                            <button>Enviar</button>
-                        </form>
-                    </div>
-                    <h1>Mural de Avisos</h1>
-                    <div class="div-results">
-                        <div id="feed_container" class="feed-container">
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
+
+                <div class="history-list" id="historyList"></div>
+            </section>
+        </main>
     </div>
 
+    <script>
+        var registrosHistorico = [
+            {
+                nome: 'Capivara',
+                cientifico: 'Hydrochoerus hydrochaeris',
+                local: 'Parque Ibirapuera',
+                data: '10/10/2026',
+                grupo: 'Mamífero'
+            },
+            {
+                nome: 'Bem-te-vi',
+                cientifico: 'Pitangus sulphuratus',
+                local: 'Parque Villa-Lobos',
+                data: '02/11/2026',
+                grupo: 'Ave'
+            },
+            {
+                nome: 'Sabiá-laranjeira',
+                cientifico: 'Turdus rufiventris',
+                local: 'Praça da Sé',
+                data: '06/11/2026',
+                grupo: 'Ave'
+            },
+            {
+                nome: 'Coruja-buraqueira',
+                cientifico: 'Athene cunicularia',
+                local: 'Vila Mariana',
+                data: '10/11/2026',
+                grupo: 'Ave'
+            }
+        ];
 
+        function iniciarHistorico() {
+            document.getElementById('totalAvistamentos').textContent = '28';
+            renderizarHistorico();
+        }
 
+        function renderizarHistorico() {
+            var busca = document.getElementById('buscarHistorico').value.toLowerCase().trim();
+            var dataInicial = document.getElementById('dataInicial').value.trim();
+            var dataFinal = document.getElementById('dataFinal').value.trim();
+            var lista = document.getElementById('historyList');
+            lista.innerHTML = '';
 
+            var exibidos = 0;
+
+            for (var i = 0; i < registrosHistorico.length; i++) {
+                var registro = registrosHistorico[i];
+                var combinaBusca = registro.nome.toLowerCase().indexOf(busca) !== -1 || registro.cientifico.toLowerCase().indexOf(busca) !== -1 || registro.local.toLowerCase().indexOf(busca) !== -1 || registro.grupo.toLowerCase().indexOf(busca) !== -1;
+                var combinaInicio = !dataInicial || registro.data >= dataInicial;
+                var combinaFim = !dataFinal || registro.data <= dataFinal;
+
+                if (!combinaBusca || !combinaInicio || !combinaFim) {
+                    continue;
+                }
+
+                exibidos++;
+
+                lista.innerHTML += `
+                    <article class="history-item">
+                        <div class="history-item-main">
+                            <h3>${registro.nome}</h3>
+                            <p>${registro.cientifico}</p>
+                            <span>${registro.local}</span>
+                        </div>
+                        <div class="history-item-meta">
+                            <strong>${registro.data}</strong>
+                            <span>${registro.grupo}</span>
+                        </div>
+                    </article>
+                `;
+            }
+
+            document.getElementById('registrosExibidos').textContent = exibidos + ' exibidos';
+        }
+    </script>
 </body>
 
 </html>
-
-<script>
-    
-    b_usuario.innerHTML = sessionStorage.NOME_USUARIO;
-
-    function limparFormulario() {
-        document.getElementById("form_postagem").reset();
-    }
-
-    function publicar() {
-        var idUsuario = sessionStorage.ID_USUARIO;
-
-        var corpo = {
-            titulo: form_postagem.titulo.value,
-            descricao: form_postagem.descricao.value
-        }
-
-        fetch(`/avisos/publicar/${idUsuario}`, {
-            method: "post",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify(corpo)
-        }).then(function (resposta) {
-
-            console.log("resposta: ", resposta);
-
-            if (resposta.ok) {
-                window.alert("Post realizado com sucesso pelo usuario de ID: " + idUsuario + "!");
-                window.location = "/dashboard/mural.html";
-                limparFormulario();
-                finalizarAguardar();
-            } else if (resposta.status == 404) {
-                window.alert("Deu 404!");
-            } else {
-                throw ("Houve um erro ao tentar realizar a postagem! Código da resposta: " + resposta.status);
-            }
-        }).catch(function (resposta) {
-            console.log(`#ERRO: ${resposta}`);
-            finalizarAguardar();
-        });
-
-        return false;
-
-    }
-
-    function editar(idAviso) {
-        sessionStorage.ID_POSTAGEM_EDITANDO = idAviso;
-        console.log("cliquei em editar - " + idAviso);
-        window.alert("Você será redirecionado à página de edição do aviso de id número: " + idAviso);
-        window.location = "/dashboard/edicao-aviso.html"
-
-    }
-
-    function deletar(idAviso) {
-        console.log("Criar função de apagar post escolhido - ID" + idAviso);
-        fetch(`/avisos/deletar/${idAviso}`, {
-            method: "DELETE",
-            headers: {
-                "Content-Type": "application/json"
-            }
-        }).then(function (resposta) {
-
-            if (resposta.ok) {
-                window.alert("Post deletado com sucesso pelo usuario de email: " + sessionStorage.getItem("EMAIL_USUARIO") + "!");
-                window.location = "/dashboard/mural.html"
-            } else if (resposta.status == 404) {
-                window.alert("Deu 404!");
-            } else {
-                throw ("Houve um erro ao tentar realizar a postagem! Código da resposta: " + resposta.status);
-            }
-        }).catch(function (resposta) {
-            console.log(`#ERRO: ${resposta}`);
-        });
-    }
-
-    function atualizarFeed() {
-        fetch("/avisos/listar").then(function (resposta) {
-            if (resposta.ok) {
-                if (resposta.status == 204) {
-                    var feed = document.getElementById("feed_container");
-                    var mensagem = document.createElement("span");
-                    mensagem.innerHTML = "Nenhum resultado encontrado."
-                    feed.appendChild(mensagem);
-                    throw "Nenhum resultado encontrado!!";
-                }
-
-                resposta.json().then(function (resposta) {
-                    console.log("Dados recebidos: ", JSON.stringify(resposta));
-
-                    var feed = document.getElementById("feed_container");
-                    feed.innerHTML = "";
-                    for (let i = 0; i < resposta.length; i++) {
-                        var publicacao = resposta[i];
-
-                        // criando e manipulando elementos do HTML via JavaScript
-                        var divPublicacao = document.createElement("div");
-                        var spanID = document.createElement("span");
-                        var spanTitulo = document.createElement("span");
-                        var spanNome = document.createElement("span");
-                        var divDescricao = document.createElement("div");
-                        var divButtons = document.createElement("div");
-                        var btnEditar = document.createElement("button");
-                        var btnDeletar = document.createElement("button");
-
-
-                        spanID.innerHTML = "ID: <b>" + publicacao.idAviso + "</b>";
-                        spanTitulo.innerHTML = "Título: <b>" + publicacao.titulo + "</b>";
-                        spanNome.innerHTML = "Autor: <b>" + publicacao.nome + "</b>";
-                        divDescricao.innerHTML = "Descrição: <b>" + publicacao.descricao + "</b>";
-                        btnEditar.innerHTML = "Editar";
-                        btnDeletar.innerHTML = "Deletar";
-
-                        divPublicacao.className = "publicacao";
-                        spanTitulo.id = "inputNumero" + publicacao.idAviso;
-                        spanNome.className = "publicacao-nome";
-                        spanTitulo.className = "publicacao-titulo";
-                        divDescricao.className = "publicacao-descricao";
-
-                        divButtons.className = "div-buttons"
-
-                        btnEditar.className = "publicacao-btn-editar"
-                        btnEditar.id = "btnEditar" + publicacao.idAviso;
-                        btnEditar.setAttribute("onclick", `editar(${publicacao.idAviso})`);
-
-                        btnDeletar.className = "publicacao-btn-editar"
-                        btnDeletar.id = "btnDeletar" + publicacao.idAviso;
-                        btnDeletar.setAttribute("onclick", `deletar(${publicacao.idAviso})`);
-
-                        divPublicacao.appendChild(spanID);
-                        divPublicacao.appendChild(spanNome);
-                        divPublicacao.appendChild(spanTitulo);
-                        divPublicacao.appendChild(divDescricao);
-                        divPublicacao.appendChild(divButtons);
-                        divButtons.appendChild(btnEditar);
-                        divButtons.appendChild(btnDeletar);
-                        feed.appendChild(divPublicacao);
-                    }
-
-                    finalizarAguardar();
-                });
-            } else {
-                throw ('Houve um erro na API!');
-            }
-        }).catch(function (resposta) {
-            console.error(resposta);
-            finalizarAguardar();
-        });
-    }
-
-</script>
