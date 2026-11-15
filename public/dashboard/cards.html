@@ -18,7 +18,7 @@
         rel="stylesheet">
 </head>
 
-<body class="dashboard-page bestiario-page" onload="validarSessao(), iniciarBestiario()">
+<body class="dashboard-page bestiario-page" onload="validarSessao(), carregarBestiario()">
     <div class="dashboard-shell">
         <aside class="dashboard-sidebar">
             <a class="dashboard-brand" href="./dashboard.html" aria-label="Bichos da Metrópole - Dashboard">
@@ -38,27 +38,30 @@
 
         <main class="dashboard-main">
             <header class="dashboard-header">
-                <h1>MEU BESTIÁRIO</h1>
-                <p>Explore sua coleção de espécies da cidade.</p>
+                <div class="dashboard-header-copy">
+                    <h1>MEU BESTIÁRIO</h1>
+                    <p>Explore sua coleção de espécies da cidade.</p>
+                </div>
+                <button class="dashboard-logout" type="button" onclick="limparSessao()"><span>Sair</span></button>
             </header>
 
             <section class="progress-card bestiario-progress" aria-label="Progresso da coleção">
                 <div class="progress-header">
                     <h2>PROGRESSO DA COLEÇÃO</h2>
-                    <strong><span id="especiesDescobertasTexto">12</span> / <span id="totalCatalogoTexto">40</span> espécies descobertas</strong>
+                    <strong><span id="especiesDescobertasTexto">0</span> / <span id="totalCatalogoTexto">40</span> espécies descobertas</strong>
                 </div>
 
                 <div class="progress-track" aria-hidden="true">
                     <div class="progress-fill" id="progressFill"></div>
                 </div>
 
-                <p class="progress-caption"><strong id="progressPercent">30%</strong> do catálogo já descoberto</p>
+                <p class="progress-caption"><strong id="progressPercent">0%</strong> do catálogo já descoberto</p>
             </section>
 
             <section class="search-section" aria-label="Busca e filtros">
                 <label class="search-field" for="buscarEspecie">
                     <span class="usuario-invisivel">Buscar espécie</span>
-                    <input id="buscarEspecie" type="search" placeholder="Buscar espécie" oninput="filtrarEspecies()">
+                    <input id="buscarEspecie" type="search" placeholder="Buscar espécie" oninput="renderizarEspecies()">
                 </label>
 
                 <div class="tabs-filter" role="tablist" aria-label="Filtro de espécies">
@@ -74,62 +77,42 @@
 
     <script>
         var filtroAtual = 'todos';
-        var especies = [
-            {
-                nome: 'Bem-te-vi',
-                cientifico: 'Pitangus sulphuratus',
-                grupo: 'Ave',
-                imagem: '../assets/assets-home/bentevi.png',
-                status: 'descoberto'
-            },
-            {
-                nome: 'Capivara',
-                cientifico: 'Hydrochoerus hydrochaeris',
-                grupo: 'Mamífero',
-                imagem: '../assets/assets-bestiario/capybara_PNG8 1.png',
-                status: 'descoberto'
-            },
-            {
-                nome: 'Sabiá-laranjeira',
-                cientifico: 'Turdus rufiventris',
-                grupo: 'Ave',
-                imagem: '../assets/assets-bestiario/sabia-laranjeira.png',
-                status: 'descoberto'
-            },
-            {
-                nome: 'Tucano-bico-verde',
-                cientifico: 'Ramphastos dicolorus',
-                grupo: 'Ave',
-                imagem: '../assets/assets-bestiario/tucano.png',
-                status: 'descoberto'
-            },
-            {
-                nome: 'Gambá',
-                cientifico: 'Didelphis aurita',
-                grupo: 'Mamífero',
-                imagem: '../assets/assets-bestiario/gamba.png',
-                status: 'pendente'
-            },
-            {
-                nome: 'Coruja-buraqueira',
-                cientifico: 'Athene cunicularia',
-                grupo: 'Ave',
-                imagem: '../assets/assets-bestiario/coruja.png',
-                status: 'pendente'
-            }
-        ];
+        var especies = [];
 
-        function iniciarBestiario() {
-            var totalEspecies = 12;
-            var totalCatalogo = 40;
-            var progresso = Math.round((totalEspecies / totalCatalogo) * 100);
+        function carregarBestiario() {
+            var idUsuario = sessionStorage.ID_USUARIO;
+
+            fetch(`/especies/bestiario/${idUsuario}`, { cache: 'no-store' }).then(function (response) {
+                if (response.ok) {
+                    response.json().then(function (resultado) {
+                        especies = resultado;
+                        atualizarResumoBestiario();
+                        renderizarEspecies();
+                    });
+                } else {
+                    console.error('Nenhum dado encontrado ou erro na API');
+                }
+            }).catch(function (erro) {
+                console.error('Erro ao carregar o bestiário:', erro.message);
+            });
+        }
+
+        function atualizarResumoBestiario() {
+            var totalCatalogo = especies.length;
+            var totalEspecies = 0;
+
+            for (var i = 0; i < especies.length; i++) {
+                if (especies[i].status === 'descoberto') {
+                    totalEspecies++;
+                }
+            }
+
+            var progresso = totalCatalogo > 0 ? Math.round((totalEspecies / totalCatalogo) * 100) : 0;
 
             document.getElementById('especiesDescobertasTexto').textContent = totalEspecies;
             document.getElementById('totalCatalogoTexto').textContent = totalCatalogo;
             document.getElementById('progressPercent').textContent = progresso + '%';
             document.getElementById('progressFill').style.width = progresso + '%';
-
-            renderizarEspecies();
         }
 
         function selecionarFiltro(filtro) {
@@ -148,10 +131,6 @@
             renderizarEspecies();
         }
 
-        function filtrarEspecies() {
-            renderizarEspecies();
-        }
-
         function renderizarEspecies() {
             var busca = document.getElementById('buscarEspecie').value.toLowerCase().trim();
             var grid = document.getElementById('speciesGrid');
@@ -160,7 +139,7 @@
             for (var i = 0; i < especies.length; i++) {
                 var especie = especies[i];
                 var combinaFiltro = filtroAtual === 'todos' || especie.status === filtroAtual;
-                var combinaBusca = especie.nome.toLowerCase().indexOf(busca) !== -1 || especie.cientifico.toLowerCase().indexOf(busca) !== -1 || especie.grupo.toLowerCase().indexOf(busca) !== -1;
+                var combinaBusca = especie.nomePopular.toLowerCase().indexOf(busca) !== -1 || especie.nomeCientifico.toLowerCase().indexOf(busca) !== -1 || especie.grupo.toLowerCase().indexOf(busca) !== -1;
 
                 if (!combinaFiltro || !combinaBusca) {
                     continue;
@@ -169,19 +148,42 @@
                 grid.innerHTML += `
                     <article class="species-card ${especie.status}">
                         <div class="species-image-wrap">
-                            <img class="species-image" src="${especie.imagem}" alt="${especie.nome}">
+                            <img class="species-image" src="${obterImagemEspecie(especie)}" alt="${especie.nomePopular}">
                             <span class="species-badge">${especie.status === 'descoberto' ? 'Descoberto' : 'Pendente'}</span>
                         </div>
                         <div class="species-content">
                             <div class="species-title-row">
-                                <h3>${especie.nome}</h3>
+                                <h3>${especie.nomePopular}</h3>
                                 <span>${especie.grupo}</span>
                             </div>
-                            <p>${especie.cientifico}</p>
+                            <p>${especie.nomeCientifico}</p>
                         </div>
                     </article>
                 `;
             }
+        }
+
+        function obterImagemEspecie(especie) {
+            if (especie.imagemPath != undefined && especie.imagemPath != null && especie.imagemPath.trim() !== '') {
+                return encodeURI(especie.imagemPath);
+            }
+
+            return obterImagemPadrao(especie.nomePopular);
+        }
+
+        function obterImagemPadrao(nomePopular) {
+            var iniciais = nomePopular.split(' ').map(function (parte) {
+                return parte.charAt(0);
+            }).join('').substring(0, 2).toUpperCase();
+
+            return 'data:image/svg+xml;charset=UTF-8,' + encodeURIComponent(
+                '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 400">' +
+                '<rect width="600" height="400" fill="#0b0b0b"/>' +
+                '<rect x="18" y="18" width="564" height="364" fill="none" stroke="#2ef0b7" stroke-opacity="0.22" stroke-width="2"/>' +
+                '<text x="300" y="206" fill="#2ef0b7" fill-opacity="0.75" font-family="Arial, sans-serif" font-size="72" font-weight="700" text-anchor="middle">' + iniciais + '</text>' +
+                '<text x="300" y="252" fill="#8d8d8d" font-family="Arial, sans-serif" font-size="18" text-anchor="middle">Imagem em breve</text>' +
+                '</svg>'
+            );
         }
     </script>
 </body>

@@ -18,7 +18,7 @@
         rel="stylesheet">
 </head>
 
-<body class="dashboard-page history-page" onload="validarSessao(), iniciarHistorico()">
+<body class="dashboard-page history-page" onload="validarSessao(), carregarHistorico()">
     <div class="dashboard-shell">
         <aside class="dashboard-sidebar">
             <a class="dashboard-brand" href="./dashboard.html" aria-label="Bichos da Metrópole - Dashboard">
@@ -38,14 +38,17 @@
 
         <main class="dashboard-main">
             <header class="dashboard-header">
-                <h1>HISTÓRICO</h1>
-                <p>Consulte os animais que você encontrou pela cidade.</p>
+                <div class="dashboard-header-copy">
+                    <h1>HISTÓRICO</h1>
+                    <p>Consulte os animais que você encontrou pela cidade.</p>
+                </div>
+                <button class="dashboard-logout" type="button" onclick="limparSessao()"><span>Sair</span></button>
             </header>
 
             <section class="history-summary" aria-label="Resumo do histórico">
                 <article class="history-total-card">
                     <h2>TOTAL DE AVISTAMENTOS</h2>
-                    <span class="history-total" id="totalAvistamentos">28</span>
+                    <span class="history-total" id="totalAvistamentos">0</span>
                 </article>
             </section>
 
@@ -69,7 +72,7 @@
             <section class="history-records-card" aria-label="Registros do histórico">
                 <div class="records-header history-header">
                     <h2>MEUS REGISTROS</h2>
-                    <span id="registrosExibidos">4 exibidos</span>
+                    <span id="registrosExibidos">0 exibidos</span>
                 </div>
 
                 <div class="history-list" id="historyList"></div>
@@ -78,46 +81,36 @@
     </div>
 
     <script>
-        var registrosHistorico = [
-            {
-                nome: 'Capivara',
-                cientifico: 'Hydrochoerus hydrochaeris',
-                local: 'Parque Ibirapuera',
-                data: '10/10/2026',
-                grupo: 'Mamífero'
-            },
-            {
-                nome: 'Bem-te-vi',
-                cientifico: 'Pitangus sulphuratus',
-                local: 'Parque Villa-Lobos',
-                data: '02/11/2026',
-                grupo: 'Ave'
-            },
-            {
-                nome: 'Sabiá-laranjeira',
-                cientifico: 'Turdus rufiventris',
-                local: 'Praça da Sé',
-                data: '06/11/2026',
-                grupo: 'Ave'
-            },
-            {
-                nome: 'Coruja-buraqueira',
-                cientifico: 'Athene cunicularia',
-                local: 'Vila Mariana',
-                data: '10/11/2026',
-                grupo: 'Ave'
-            }
-        ];
+        var registrosHistorico = [];
 
-        function iniciarHistorico() {
-            document.getElementById('totalAvistamentos').textContent = '28';
-            renderizarHistorico();
+        function carregarHistorico() {
+            var idUsuario = sessionStorage.ID_USUARIO;
+
+            fetch(`/avistamentos/listar/${idUsuario}`, { cache: 'no-store' }).then(function (response) {
+                if (response.status == 204) {
+                    registrosHistorico = [];
+                    document.getElementById('totalAvistamentos').textContent = '0';
+                    renderizarHistorico();
+                } else if (response.ok) {
+                    response.json().then(function (resultado) {
+                        registrosHistorico = resultado;
+                        document.getElementById('totalAvistamentos').textContent = resultado.length;
+                        renderizarHistorico();
+                    });
+                } else {
+                    console.error('Nenhum dado encontrado ou erro na API');
+                }
+            }).catch(function (erro) {
+                console.error('Erro ao carregar histórico:', erro.message);
+            });
         }
 
         function renderizarHistorico() {
             var busca = document.getElementById('buscarHistorico').value.toLowerCase().trim();
             var dataInicial = document.getElementById('dataInicial').value.trim();
             var dataFinal = document.getElementById('dataFinal').value.trim();
+            var dataInicialIso = converterDataFiltroParaIso(dataInicial);
+            var dataFinalIso = converterDataFiltroParaIso(dataFinal);
             var lista = document.getElementById('historyList');
             lista.innerHTML = '';
 
@@ -125,9 +118,10 @@
 
             for (var i = 0; i < registrosHistorico.length; i++) {
                 var registro = registrosHistorico[i];
-                var combinaBusca = registro.nome.toLowerCase().indexOf(busca) !== -1 || registro.cientifico.toLowerCase().indexOf(busca) !== -1 || registro.local.toLowerCase().indexOf(busca) !== -1 || registro.grupo.toLowerCase().indexOf(busca) !== -1;
-                var combinaInicio = !dataInicial || registro.data >= dataInicial;
-                var combinaFim = !dataFinal || registro.data <= dataFinal;
+                var combinaBusca = registro.nomePopular.toLowerCase().indexOf(busca) !== -1 || registro.nomeCientifico.toLowerCase().indexOf(busca) !== -1 || registro.localAvistamento.toLowerCase().indexOf(busca) !== -1 || registro.grupo.toLowerCase().indexOf(busca) !== -1;
+                var registroIso = converterDataParaFiltro(registro.dataAvistamento);
+                var combinaInicio = !dataInicialIso || registroIso >= dataInicialIso;
+                var combinaFim = !dataFinalIso || registroIso <= dataFinalIso;
 
                 if (!combinaBusca || !combinaInicio || !combinaFim) {
                     continue;
@@ -138,12 +132,12 @@
                 lista.innerHTML += `
                     <article class="history-item">
                         <div class="history-item-main">
-                            <h3>${registro.nome}</h3>
-                            <p>${registro.cientifico}</p>
-                            <span>${registro.local}</span>
+                            <h3>${registro.nomePopular}</h3>
+                            <p>${registro.nomeCientifico}</p>
+                            <span>${registro.localAvistamento}</span>
                         </div>
                         <div class="history-item-meta">
-                            <strong>${registro.data}</strong>
+                            <strong>${registro.dataAvistamento}</strong>
                             <span>${registro.grupo}</span>
                         </div>
                     </article>
@@ -151,6 +145,33 @@
             }
 
             document.getElementById('registrosExibidos').textContent = exibidos + ' exibidos';
+        }
+
+        function converterDataParaFiltro(dataBr) {
+            if (dataBr == undefined || dataBr.indexOf('/') === -1) {
+                return '';
+            }
+
+            var partes = dataBr.split('/');
+            return `${partes[2]}-${partes[1]}-${partes[0]}`;
+        }
+
+        function converterDataFiltroParaIso(dataBr) {
+            if (dataBr == undefined || dataBr.trim() === '' || dataBr.indexOf('/') === -1) {
+                return '';
+            }
+
+            var partes = dataBr.split('/');
+
+            if (partes.length != 3) {
+                return '';
+            }
+
+            var ano = partes[2].length === 2 ? '20' + partes[2] : partes[2];
+            var mes = partes[1].padStart(2, '0');
+            var dia = partes[0].padStart(2, '0');
+
+            return `${ano}-${mes}-${dia}`;
         }
     </script>
 </body>

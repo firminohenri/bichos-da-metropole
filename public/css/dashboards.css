@@ -629,9 +629,19 @@ canvas {
 }
 
 .dashboard-page .dashboard-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
   border-bottom: 1px solid rgba(46, 240, 183, 0.22);
   padding-bottom: 18px;
   margin-bottom: 22px;
+}
+
+.dashboard-page .dashboard-header-copy {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
 }
 
 .dashboard-page .dashboard-header h1,
@@ -655,6 +665,53 @@ canvas {
   margin: 8px 0 0;
   color: #a8a8a8;
   font-size: 16px;
+}
+
+.dashboard-page .dashboard-logout {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 92px;
+  height: 42px;
+  padding: 0 18px;
+  background: #2ef0b7;
+  color: #050505;
+  border: 0;
+  position: relative;
+  overflow: hidden;
+  font-family: 'ChakraPetchCustom', 'Exo 2', sans-serif;
+  font-size: 18px;
+  font-weight: 700;
+  text-transform: uppercase;
+  text-decoration: none;
+  box-sizing: border-box;
+  flex: 0 0 auto;
+  cursor: pointer;
+  transition: color 0.32s ease;
+}
+
+.dashboard-page .dashboard-logout::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: #8d18ff;
+  transform: scaleX(0);
+  transform-origin: left center;
+  transition: transform 0.32s ease;
+  z-index: 0;
+}
+
+.dashboard-page .dashboard-logout span {
+  position: relative;
+  z-index: 1;
+}
+
+.dashboard-page .dashboard-logout:hover::before {
+  transform: scaleX(1);
+}
+
+.dashboard-page .dashboard-logout:hover {
+  color: #050505;
 }
 
 .dashboard-page .stats-grid {

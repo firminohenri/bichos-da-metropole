@@ -20,7 +20,7 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 
-<body class="dashboard-page" onload="validarSessao(), iniciarDashboard()">
+<body class="dashboard-page" onload="validarSessao(), carregarDashboard()">
     <div class="dashboard-shell">
         <aside class="dashboard-sidebar">
             <a class="dashboard-brand" href="./dashboard.html" aria-label="Bichos da Metrópole - Dashboard">
@@ -40,8 +40,11 @@
 
         <main class="dashboard-main">
             <header class="dashboard-header">
-                <h1>PAINEL DO EXPLORADOR</h1>
-                <p>Acompanhe suas descobertas, progresso no bestiário e fauna da cidade.</p>
+                <div class="dashboard-header-copy">
+                    <h1>PAINEL DO EXPLORADOR</h1>
+                    <p>Acompanhe suas descobertas, progresso no bestiário e fauna da cidade.</p>
+                </div>
+                <button class="dashboard-logout" type="button" onclick="limparSessao()"><span>Sair</span></button>
             </header>
 
             <section class="stats-grid" aria-label="Resumo geral">
@@ -102,33 +105,64 @@
     </div>
 
     <script>
-        function iniciarDashboard() {
-            var totalEspecies = 12;
-            var totalAvistamentos = 28;
-            var totalCatalogo = 40;
-            var progresso = Math.round((totalEspecies / totalCatalogo) * 100);
+        var chartAvistamentos;
+        var chartEspecies;
 
-            document.getElementById('totalEspecies').textContent = totalEspecies;
+        function carregarDashboard() {
+            var idUsuario = sessionStorage.ID_USUARIO;
+
+            fetch(`/dashboard/resumo/${idUsuario}`, { cache: 'no-store' }).then(function (response) {
+                if (response.ok) {
+                    response.json().then(function (resultado) {
+                        atualizarResumo(resultado);
+                        renderizarChartAvistamentos(resultado.avistamentosPorMes || []);
+                        renderizarChartEspecies(resultado.especiesPorGrupo || []);
+                        renderizarRegistros(resultado.ultimosRegistros || []);
+                    });
+                } else {
+                    console.error('Nenhum dado encontrado ou erro na API');
+                }
+            }).catch(function (erro) {
+                console.error('Erro ao carregar a dashboard:', erro.message);
+            });
+        }
+
+        function atualizarResumo(resultado) {
+            var totalCatalogo = Number(resultado.totalCatalogo || 0);
+            var especiesDescobertas = Number(resultado.especiesDescobertas || 0);
+            var totalAvistamentos = Number(resultado.totalAvistamentos || 0);
+            var progresso = totalCatalogo > 0 ? Math.round((especiesDescobertas / totalCatalogo) * 100) : 0;
+
+            document.getElementById('totalEspecies').textContent = especiesDescobertas;
             document.getElementById('totalAvistamentos').textContent = totalAvistamentos;
-            document.getElementById('especiesDescobertasTexto').textContent = totalEspecies;
+            document.getElementById('especiesDescobertasTexto').textContent = especiesDescobertas;
             document.getElementById('totalCatalogoTexto').textContent = totalCatalogo;
             document.getElementById('progressPercent').textContent = progresso + '%';
             document.getElementById('progressFill').style.width = progresso + '%';
-
-            renderizarChartAvistamentos();
-            renderizarChartEspecies();
-            renderizarRegistros();
         }
 
-        function renderizarChartAvistamentos() {
+        function renderizarChartAvistamentos(avistamentosPorMes) {
             var ctx = document.getElementById('chartAvistamentos');
+            var meses = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'];
+            var dados = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
 
-            new Chart(ctx, {
+            for (var i = 0; i < avistamentosPorMes.length; i++) {
+                var item = avistamentosPorMes[i];
+                if (item.numeroMes >= 1 && item.numeroMes <= 12) {
+                    dados[item.numeroMes - 1] = Number(item.total);
+                }
+            }
+
+            if (chartAvistamentos != undefined) {
+                chartAvistamentos.destroy();
+            }
+
+            chartAvistamentos = new Chart(ctx, {
                 type: 'line',
                 data: {
-                    labels: ['Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov'],
+                    labels: meses,
                     datasets: [{
-                        data: [4, 7, 6, 10, 13, 17],
+                        data: dados,
                         borderColor: '#2ef0b7',
                         backgroundColor: 'rgba(46, 240, 183, 0.18)',
                         pointBackgroundColor: '#2ef0b7',
@@ -167,16 +201,31 @@
             });
         }
 
-        function renderizarChartEspecies() {
+        function renderizarChartEspecies(especiesPorGrupo) {
             var ctx = document.getElementById('chartEspecies');
+            var labels = ['Ave', 'Mamífero', 'Réptil', 'Anfíbio', 'Inseto'];
+            var cores = ['#ffd91a', '#a92cff', '#c42cff', '#8f22ff', '#cc33ff'];
+            var dados = [0, 0, 0, 0, 0];
 
-            new Chart(ctx, {
+            for (var i = 0; i < especiesPorGrupo.length; i++) {
+                var item = especiesPorGrupo[i];
+                var indice = labels.indexOf(item.grupo);
+                if (indice > -1) {
+                    dados[indice] = Number(item.total);
+                }
+            }
+
+            if (chartEspecies != undefined) {
+                chartEspecies.destroy();
+            }
+
+            chartEspecies = new Chart(ctx, {
                 type: 'bar',
                 data: {
-                    labels: ['Aves', 'Mamíferos', 'Répteis', 'Anfíbios', 'Insetos'],
+                    labels: labels,
                     datasets: [{
-                        data: [8, 3, 2, 1, 5],
-                        backgroundColor: ['#ffd91a', '#a92cff', '#c42cff', '#8f22ff', '#cc33ff'],
+                        data: dados,
+                        backgroundColor: cores,
                         borderWidth: 0,
                         borderRadius: 4,
                         barThickness: 28
@@ -209,24 +258,14 @@
             });
         }
 
-        function renderizarRegistros() {
-            var registros = [
-                {
-                    nome: 'Bem-te-vi',
-                    cientifico: 'Pitangus sulphuratus',
-                    data: '02 nov 2026',
-                    local: 'Parque Villa-Lobos'
-                },
-                {
-                    nome: 'Bem-te-vi',
-                    cientifico: 'Pitangus sulphuratus',
-                    data: '02 nov 2026',
-                    local: 'Parque Villa-Lobos'
-                }
-            ];
-
+        function renderizarRegistros(registros) {
             var lista = document.getElementById('recordsList');
             lista.innerHTML = '';
+
+            if (registros.length === 0) {
+                lista.innerHTML = '<p style="color:#8d8d8d; margin:0;">Nenhum avistamento registrado ainda.</p>';
+                return;
+            }
 
             for (var i = 0; i < registros.length; i++) {
                 var registro = registros[i];
@@ -234,12 +273,12 @@
                 lista.innerHTML += `
                     <article class="record-item">
                         <div class="record-info">
-                            <h3>${registro.nome}</h3>
-                            <p>${registro.cientifico}</p>
+                            <h3>${registro.nomePopular}</h3>
+                            <p>${registro.nomeCientifico}</p>
                         </div>
                         <div class="record-meta">
-                            <span>${registro.data}</span>
-                            <span>${registro.local}</span>
+                            <span>${registro.dataAvistamento}</span>
+                            <span>${registro.localAvistamento}</span>
                         </div>
                     </article>
                 `;

@@ -18,7 +18,7 @@
         rel="stylesheet">
 </head>
 
-<body class="dashboard-page avistamento-page" onload="validarSessao()">
+<body class="dashboard-page avistamento-page" onload="validarSessao(), carregarEspecies()">
     <div class="dashboard-shell">
         <aside class="dashboard-sidebar">
             <a class="dashboard-brand" href="./dashboard.html" aria-label="Bichos da Metrópole - Dashboard">
@@ -38,8 +38,11 @@
 
         <main class="dashboard-main">
             <header class="dashboard-header">
-                <h1>NOVO AVISTAMENTO</h1>
-                <p>Registre o animal que acabou de visualizar.</p>
+                <div class="dashboard-header-copy">
+                    <h1>NOVO AVISTAMENTO</h1>
+                    <p>Registre o animal que acabou de visualizar.</p>
+                </div>
+                <button class="dashboard-logout" type="button" onclick="limparSessao()"><span>Sair</span></button>
             </header>
 
             <section class="avistamento-form-card" aria-label="Formulário de avistamento">
@@ -48,12 +51,6 @@
                         <span>Espécie encontrada</span>
                         <select id="especieEncontrada">
                             <option value="" selected disabled>Selecione uma espécie do catálogo</option>
-                            <option value="bem-te-vi">Bem-te-vi</option>
-                            <option value="capivara">Capivara</option>
-                            <option value="sabia-laranjeira">Sabiá-laranjeira</option>
-                            <option value="tucano-bico-verde">Tucano-bico-verde</option>
-                            <option value="gamba">Gambá</option>
-                            <option value="coruja-buraqueira">Coruja-buraqueira</option>
                         </select>
                     </label>
 
@@ -76,17 +73,66 @@
     </div>
 
     <script>
+        var especies = [];
+
+        function carregarEspecies() {
+            fetch('/especies/listar', { cache: 'no-store' }).then(function (response) {
+                if (response.ok) {
+                    response.json().then(function (resultado) {
+                        especies = resultado;
+                        preencherSelect();
+                    });
+                } else {
+                    console.error('Nenhum dado encontrado ou erro na API');
+                }
+            }).catch(function (erro) {
+                console.error('Erro ao carregar as espécies:', erro.message);
+            });
+        }
+
+        function preencherSelect() {
+            var select = document.getElementById('especieEncontrada');
+
+            for (var i = 0; i < especies.length; i++) {
+                var especie = especies[i];
+                select.innerHTML += `<option value="${especie.id}">${especie.nomePopular} - ${especie.nomeCientifico}</option>`;
+            }
+        }
+
         function registrarAvistamento() {
-            var especie = document.getElementById('especieEncontrada').value;
+            var idUsuario = sessionStorage.ID_USUARIO;
+            var fkEspecie = document.getElementById('especieEncontrada').value;
             var data = document.getElementById('dataAvistamento').value.trim();
             var local = document.getElementById('localAvistamento').value.trim();
 
-            if (!especie || !data || !local) {
+            if (!fkEspecie || !data || !local) {
                 window.alert('Preencha espécie, data e local para continuar.');
                 return false;
             }
 
-            window.alert('Avistamento registrado na interface. A integração com o backend será ligada na próxima etapa.');
+            fetch(`/avistamentos/cadastrar/${idUsuario}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    dataAvistamentoServer: data,
+                    localAvistamentoServer: local,
+                    fkEspecieServer: fkEspecie
+                })
+            }).then(function (response) {
+                if (response.ok) {
+                    window.alert('Avistamento registrado com sucesso!');
+                    window.location = './mural.html';
+                } else {
+                    response.text().then(function (texto) {
+                        window.alert(texto);
+                    });
+                }
+            }).catch(function (erro) {
+                console.error('Erro ao registrar avistamento:', erro.message);
+            });
+
             return false;
         }
     </script>
