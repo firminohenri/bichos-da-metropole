@@ -19,7 +19,7 @@ function buscarResumo(idUsuario) {
                     INNER JOIN grupo g ON g.id = e.fk_grupo
                     WHERE a.fk_usuario = ${idUsuario}
                     ORDER BY a.data_avistamento DESC, a.id DESC
-                    LIMIT 4`;
+                    LIMIT 2`;
 
     var sqlMeses = `SELECT 
                         MONTH(a.data_avistamento) AS numeroMes,

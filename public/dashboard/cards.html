@@ -61,23 +61,36 @@
             <section class="search-section" aria-label="Busca e filtros">
                 <label class="search-field" for="buscarEspecie">
                     <span class="usuario-invisivel">Buscar espécie</span>
-                    <input id="buscarEspecie" type="search" placeholder="Buscar espécie" oninput="renderizarEspecies()">
+                    <input id="buscarEspecie" type="search" placeholder="Buscar espécie" oninput="paginaAtual = 1; renderizarEspecies()">
                 </label>
 
                 <div class="tabs-filter" role="tablist" aria-label="Filtro de espécies">
                     <button class="tab-filter active" type="button" data-filter="todos" onclick="selecionarFiltro('todos')">Todos</button>
-                    <button class="tab-filter" type="button" data-filter="descobertos" onclick="selecionarFiltro('descobertos')">Descobertos</button>
-                    <button class="tab-filter" type="button" data-filter="pendentes" onclick="selecionarFiltro('pendentes')">Pendentes</button>
+                    <button class="tab-filter" type="button" data-filter="descoberto" onclick="selecionarFiltro('descoberto')">Descobertos</button>
+                    <button class="tab-filter" type="button" data-filter="pendente" onclick="selecionarFiltro('pendente')">Pendentes</button>
                 </div>
             </section>
 
             <section class="species-grid" id="speciesGrid" aria-label="Coleção de espécies"></section>
+
+            <section class="pagination-bar" aria-label="Paginação do bestiário">
+                <button class="pagination-button" type="button" id="btnAnterior" onclick="mudarPagina(-1)">Anterior</button>
+                <span class="pagination-info" id="paginationInfo">Página 1 de 1</span>
+                <button class="pagination-button" type="button" id="btnProxima" onclick="mudarPagina(1)">Próxima</button>
+            </section>
         </main>
     </div>
 
     <script>
         let filtroAtual = 'todos';
         let especies = [];
+        let paginaAtual = 1;
+        let itensPorPagina = 6;
+        let filtrosBestiario = {
+            todos: null,
+            descoberto: 'descoberto',
+            pendente: 'pendente'
+        };
 
         function carregarBestiario() {
             let idUsuario = sessionStorage.ID_USUARIO;
@@ -87,6 +100,7 @@
                     response.json().then(function (resultado) {
                         especies = resultado;
                         atualizarResumoBestiario();
+                        paginaAtual = 1;
                         renderizarEspecies();
                     });
                 } else {
@@ -117,6 +131,7 @@
 
         function selecionarFiltro(filtro) {
             filtroAtual = filtro;
+            paginaAtual = 1;
 
             let botoes = document.querySelectorAll('.tab-filter');
             for (let i = 0; i < botoes.length; i++) {
@@ -131,35 +146,103 @@
             renderizarEspecies();
         }
 
+        function mudarPagina(direcao) {
+            let paginas = obterQuantidadePaginas();
+            let proximaPagina = paginaAtual + direcao;
+
+            if (proximaPagina < 1 || proximaPagina > paginas) {
+                return;
+            }
+
+            paginaAtual = proximaPagina;
+            renderizarEspecies();
+        }
+
         function renderizarEspecies() {
             let busca = document.getElementById('buscarEspecie').value.toLowerCase().trim();
             let grid = document.getElementById('speciesGrid');
             grid.innerHTML = '';
 
+            let especiesFiltradas = [];
+            let statusFiltro = filtrosBestiario[filtroAtual];
+
             for (let i = 0; i < especies.length; i++) {
                 let especie = especies[i];
-                let combinaFiltro = filtroAtual === 'todos' || especie.status === filtroAtual;
+                let combinaFiltro = statusFiltro == null || especie.status === statusFiltro;
                 let combinaBusca = especie.nomePopular.toLowerCase().indexOf(busca) !== -1 || especie.nomeCientifico.toLowerCase().indexOf(busca) !== -1 || especie.grupo.toLowerCase().indexOf(busca) !== -1;
 
                 if (!combinaFiltro || !combinaBusca) {
                     continue;
                 }
 
+                especiesFiltradas.push(especie);
+            }
+
+            let totalPaginas = especiesFiltradas.length > 0 ? Math.ceil(especiesFiltradas.length / itensPorPagina) : 1;
+
+            if (paginaAtual > totalPaginas) {
+                paginaAtual = totalPaginas;
+            }
+
+            let inicio = (paginaAtual - 1) * itensPorPagina;
+            let fim = inicio + itensPorPagina;
+            let especiesDaPagina = especiesFiltradas.slice(inicio, fim);
+
+            for (let j = 0; j < especiesDaPagina.length; j++) {
+                let especiePagina = especiesDaPagina[j];
+
                 grid.innerHTML += `
-                    <article class="species-card ${especie.status}">
+                    <article class="species-card ${especiePagina.status}">
                         <div class="species-image-wrap">
-                            <img class="species-image" src="${obterImagemEspecie(especie)}" alt="${especie.nomePopular}">
-                            <span class="species-badge">${especie.status === 'descoberto' ? 'Descoberto' : 'Pendente'}</span>
+                            <img class="species-image" src="${obterImagemEspecie(especiePagina)}" alt="${especiePagina.nomePopular}">
+                            <span class="species-badge">${especiePagina.status === 'descoberto' ? 'Descoberto' : 'Pendente'}</span>
                         </div>
                         <div class="species-content">
                             <div class="species-title-row">
-                                <h3>${especie.nomePopular}</h3>
-                                <span>${especie.grupo}</span>
+                                <h3>${especiePagina.nomePopular}</h3>
+                                <span>${especiePagina.grupo}</span>
                             </div>
-                            <p>${especie.nomeCientifico}</p>
+                            <p>${especiePagina.nomeCientifico}</p>
                         </div>
                     </article>
                 `;
+            }
+
+            atualizarPaginacao(especiesFiltradas.length, totalPaginas);
+        }
+
+        function obterQuantidadePaginas() {
+            let busca = document.getElementById('buscarEspecie').value.toLowerCase().trim();
+            let totalFiltrado = 0;
+            let statusFiltro = filtrosBestiario[filtroAtual];
+
+            for (let i = 0; i < especies.length; i++) {
+                let especie = especies[i];
+                let combinaFiltro = statusFiltro == null || especie.status === statusFiltro;
+                let combinaBusca = especie.nomePopular.toLowerCase().indexOf(busca) !== -1 || especie.nomeCientifico.toLowerCase().indexOf(busca) !== -1 || especie.grupo.toLowerCase().indexOf(busca) !== -1;
+
+                if (combinaFiltro && combinaBusca) {
+                    totalFiltrado++;
+                }
+            }
+
+            return totalFiltrado > 0 ? Math.ceil(totalFiltrado / itensPorPagina) : 1;
+        }
+
+        function atualizarPaginacao(totalItens, totalPaginas) {
+            let info = document.getElementById('paginationInfo');
+            let btnAnterior = document.getElementById('btnAnterior');
+            let btnProxima = document.getElementById('btnProxima');
+
+            info.textContent = 'Página ' + paginaAtual + ' de ' + totalPaginas;
+            btnAnterior.disabled = paginaAtual <= 1;
+            btnProxima.disabled = paginaAtual >= totalPaginas;
+
+            btnAnterior.classList.toggle('disabled', btnAnterior.disabled);
+            btnProxima.classList.toggle('disabled', btnProxima.disabled);
+
+            if (totalItens === 0) {
+                info.textContent = 'Nenhum resultado encontrado';
             }
         }
 

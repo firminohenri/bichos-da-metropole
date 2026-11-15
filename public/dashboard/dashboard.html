@@ -262,13 +262,15 @@
             let lista = document.getElementById('recordsList');
             lista.innerHTML = '';
 
-            if (registros.length === 0) {
+            let registrosLimitados = registros.slice(0, 2);
+
+            if (registrosLimitados.length === 0) {
                 lista.innerHTML = '<p style="color:#8d8d8d; margin:0;">Nenhum avistamento registrado ainda.</p>';
                 return;
             }
 
-            for (let i = 0; i < registros.length; i++) {
-                let registro = registros[i];
+            for (let i = 0; i < registrosLimitados.length; i++) {
+                let registro = registrosLimitados[i];
 
                 lista.innerHTML += `
                     <article class="record-item">

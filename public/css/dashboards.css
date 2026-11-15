@@ -935,19 +935,29 @@ canvas {
 
 .bestiario-page .tab-filter {
   height: 42px;
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  background: transparent;
+  border: 0;
+  background: #121212;
+  background-image: linear-gradient(90deg, #2ef0b7 0%, #2ef0b7 100%);
+  background-repeat: no-repeat;
+  background-size: 0% 100%;
+  background-position: left center;
   color: #dcdcdc;
   font-family: 'Exo 2', sans-serif;
   font-size: 18px;
   cursor: pointer;
+  transition: background-size 0.32s ease, color 0.32s ease;
 }
 
 .bestiario-page .tab-filter.active {
   background: #2ef0b7;
   color: #050505;
-  border-color: #2ef0b7;
+  background-size: 100% 100%;
   font-weight: 700;
+}
+
+.bestiario-page .tab-filter:hover {
+  background-size: 100% 100%;
+  color: #050505;
 }
 
 .bestiario-page .species-grid {
@@ -1024,6 +1034,51 @@ canvas {
   margin: 4px 0 0;
   color: #8d8d8d;
   font-style: italic;
+}
+
+.bestiario-page .pagination-bar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  margin-top: 18px;
+}
+
+.bestiario-page .pagination-button {
+  min-width: 110px;
+  height: 42px;
+  border: 0;
+  background: #2ef0b7;
+  color: #050505;
+  font-family: 'ChakraPetchCustom', 'Exo 2', sans-serif;
+  font-size: 16px;
+  font-weight: 700;
+  text-transform: uppercase;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  background-image: linear-gradient(90deg, #8d18ff 0%, #8d18ff 100%);
+  background-repeat: no-repeat;
+  background-size: 0% 100%;
+  background-position: left center;
+  transition: background-size 0.32s ease, color 0.32s ease, opacity 0.32s ease;
+}
+
+.bestiario-page .pagination-button:hover {
+  background-size: 100% 100%;
+  color: #050505;
+}
+
+.bestiario-page .pagination-button.disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+.bestiario-page .pagination-info {
+  color: #f5f5f5;
+  font-size: 16px;
+  min-width: 110px;
+  text-align: center;
 }
 
 /* NOVA DASHBOARD - HISTÓRICO */
