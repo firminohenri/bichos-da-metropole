@@ -535,7 +535,7 @@ canvas {
   box-sizing: border-box;
   position: relative;
   overflow: hidden;
-  transition: transform 0.2s ease, filter 0.2s ease;
+  transition: color 0.32s ease, filter 0.2s ease;
 }
 
 .dashboard-page .stat-cta-button {
@@ -565,7 +565,7 @@ canvas {
 }
 
 .dashboard-page .stat-cta-button:hover {
-  color: #050505;
+  color: #ffffff;
 }
 
 .dashboard-page .dashboard-action {
@@ -596,12 +596,17 @@ canvas {
   z-index: 1;
 }
 
+.dashboard-page .dashboard-action.active-action,
+.dashboard-page .dashboard-action.active-action span {
+  color: #ffffff;
+}
+
 .dashboard-page:not(.avistamento-page) .dashboard-action:hover::before {
   transform: scaleX(1);
 }
 
 .dashboard-page:not(.avistamento-page) .dashboard-action:hover {
-  color: #050505;
+  color: #ffffff;
 }
 
 .dashboard-page .dashboard-nav-item:hover {
@@ -713,7 +718,7 @@ canvas {
 }
 
 .dashboard-page .dashboard-logout:hover {
-  color: #050505;
+  color: #ffffff;
 }
 
 .dashboard-page .stats-grid {
@@ -987,7 +992,7 @@ canvas {
   text-align: center;
   padding: 0.25rem 0.5rem;
   cursor: pointer;
-  transition: background-size 0.32s ease, color 0.32s ease;
+  transition: background-size 0.32s ease;
 }
 
 .bestiario-page .tab-filter.active {
@@ -1480,4 +1485,20 @@ canvas {
   font-weight: 700;
   text-transform: uppercase;
   cursor: pointer;
+  overflow: hidden;
+  background-image: linear-gradient(90deg, #8d18ff 0%, #8d18ff 100%);
+  background-repeat: no-repeat;
+  background-size: 0% 100%;
+  background-position: left center;
+  transition: background-size 0.32s ease;
+}
+
+.avistamento-page .avistamento-submit:hover {
+  background-size: 100% 100%;
+  color: #ffffff;
+}
+
+.avistamento-page .avistamento-submit:focus-visible {
+  background-size: 100% 100%;
+  color: #ffffff;
 }
