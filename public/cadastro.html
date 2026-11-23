@@ -170,113 +170,121 @@
 
     <!--footer fim-->
 
+    
 </body>
 
 </html>
 
 <script>
+      function cadastrar() {
+        aguardar();
 
-  function validarSenha(senha) {
-    let indice = 0;
-    let possuiMaiuscula = false;
-    let possuiNumero = false;
+        //Recupere o valor da nova input pelo nome do id
+        let nomeVar = nome_input.value;
+        let emailVar = email_input.value;
+        let senhaVar = senha_input.value;
+        let confirmacaoSenhaVar = confirmacao_senha_input.value;
 
-    while (indice < senha.length) {
-      let caractere = senha.charAt(indice);
-
-      if (caractere >= "A" && caractere <= "Z") {
-        possuiMaiuscula = true;
-      }
-
-      if (caractere >= "0" && caractere <= "9") {
-        possuiNumero = true;
-      }
-
-      indice++;
-    }
-
-    return senha.length >= 6 && possuiMaiuscula && possuiNumero;
-  }
-
-  function cadastrar() {
-    aguardar();
-
-    //Recupere o valor da nova input pelo nome do id
-    let nomeVar = nome_input.value;
-    let emailVar = email_input.value;
-    let senhaVar = senha_input.value;
-    let confirmacaoSenhaVar = confirmacao_senha_input.value;
-
-    // Verificando se há algum campo em branco
-    if (
-      nomeVar == "" ||
-      emailVar == "" ||
-      senhaVar == "" ||
-      confirmacaoSenhaVar == ""
-    ) {
-      cardErro.style.display = "block";
-      mensagem_erro.innerHTML =
-        "(Mensagem de erro para todos os campos em branco)";
-
-      finalizarAguardar();
-      return false;
-    } else {
-      setInterval(sumirMensagem, 5000);
-    }
-
-    if (senhaVar !== confirmacaoSenhaVar) {
-      cardErro.style.display = "block";
-      mensagem_erro.innerHTML = "A senha e a confirmação de senha precisam ser iguais.";
-      finalizarAguardar();
-      return false;
-    }
-
-    if (!validarSenha(senhaVar)) {
-      cardErro.style.display = "block";
-      mensagem_erro.innerHTML = "A senha precisa ter no mínimo 6 caracteres, uma letra maiúscula e um número.";
-      finalizarAguardar();
-      return false;
-    }
-
-    // Enviando o valor da nova input
-    fetch("/usuarios/cadastrar", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        nomeServer: nomeVar,
-        emailServer: emailVar,
-        senhaServer: senhaVar,
-      }),
-    })
-      .then(function (resposta) {
-        console.log("resposta: ", resposta);
-
-        if (resposta.ok) {
+        // Verificando se há algum campo em branco separadamente
+        if (nomeVar == "") {
           cardErro.style.display = "block";
-
-          mensagem_erro.innerHTML =
-            "Cadastro realizado com sucesso! Redirecionando para tela de Login...";
-
-          setTimeout(() => {
-            window.location = "login.html";
-          }, "2000");
-
+          mensagem_erro.innerHTML = "O nome não pode estar em branco.";
+          finalizarAguardar();
+        } else if (emailVar == "") {
+          cardErro.style.display = "block";
+          mensagem_erro.innerHTML = "O email não pode estar em branco.";
+          finalizarAguardar();
+        } else if (senhaVar == "") {
+          cardErro.style.display = "block";
+          mensagem_erro.innerHTML = "A senha não pode estar em branco.";
+          finalizarAguardar();
+        } else if (confirmacaoSenhaVar == "") {
+          cardErro.style.display = "block";
+          mensagem_erro.innerHTML = "A confirmação de senha não pode estar em branco.";
           finalizarAguardar();
         } else {
-          throw "Houve um erro ao tentar realizar o cadastro!";
+          setInterval(sumirMensagem, 5000);
+
+          let numeros = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"];
+          let caracteresEspeciais = ["!", "@", "#", "$", "%", "&", "*", "(", ")", "-", "_", "+", "=", "[", "]", "{", "}", ";", ":", ",", ".", "<", ">", "/", "?", "|", "\\", "~", "^"];
+          let possuiMaiuscula = false;
+          let possuiMinuscula = false;
+          let possuiNumero = false;
+          let possuiEspecial = false;
+          let i = 0;
+
+          while (i < senhaVar.length) {
+            let caractere = senhaVar.charAt(i);
+
+            if (caractere === caractere.toUpperCase() && caractere !== caractere.toLowerCase()) {
+              possuiMaiuscula = true;
+            }
+
+            if (caractere === caractere.toLowerCase() && caractere !== caractere.toUpperCase()) {
+              possuiMinuscula = true;
+            }
+
+            if (numeros.includes(caractere)) {
+              possuiNumero = true;
+            }
+
+            if (caracteresEspeciais.indexOf(caractere) >= 0) {
+              possuiEspecial = true;
+            }
+
+            i++;
+          }
+
+          let senhaValida = senhaVar.length >= 6 && possuiMaiuscula && possuiMinuscula && possuiNumero && possuiEspecial;
+
+          if (senhaVar !== confirmacaoSenhaVar) {
+            cardErro.style.display = "block";
+            mensagem_erro.innerHTML = "A senha e a confirmação de senha precisam ser iguais.";
+            finalizarAguardar();
+          } else if (!senhaValida) {
+            cardErro.style.display = "block";
+            mensagem_erro.innerHTML = "A senha precisa ter no mínimo 6 caracteres, uma letra maiúscula, uma letra minúscula, um número e um caractere especial.";
+            finalizarAguardar();
+          } else {
+            // Enviando o valor da nova input
+            fetch("/usuarios/cadastrar", {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({
+                nomeServer: nomeVar,
+                emailServer: emailVar,
+                senhaServer: senhaVar,
+              }),
+            })
+              .then(function (resposta) {
+                console.log("resposta: ", resposta);
+
+                if (resposta.ok) {
+                  cardErro.style.display = "block";
+
+                  mensagem_erro.innerHTML =
+                    "Cadastro realizado com sucesso! Redirecionando para tela de Login...";
+
+                  setTimeout(function () {
+                    window.location = "login.html";
+                  }, 2000);
+
+                  finalizarAguardar();
+                } else {
+                  throw "Houve um erro ao tentar realizar o cadastro!";
+                }
+              })
+              .catch(function (resposta) {
+                console.log(`#ERRO: ${resposta}`);
+                finalizarAguardar();
+              });
+          }
         }
-      })
-      .catch(function (resposta) {
-        console.log(`#ERRO: ${resposta}`);
-        finalizarAguardar();
-      });
+      }
 
-    return false;
-  }
-
-  function sumirMensagem() {
-    cardErro.style.display = "none";
-  }
-</script>
+      function sumirMensagem() {
+        cardErro.style.display = "none";
+      }
+    </script>

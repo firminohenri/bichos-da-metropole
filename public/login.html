@@ -167,13 +167,13 @@
 
     let tentativasLogin = 0;
 
-
     function entrar() {
         aguardar();
 
         let emailVar = email_input.value;
         let senhaVar = senha_input.value;
         let btnEntrar = document.getElementById("btn_entrar");
+        let podeEntrar = true;
 
         if (emailVar == "" || senhaVar == "") {
             tentativasLogin++;
@@ -192,72 +192,73 @@
                 mensagem_erro.innerHTML = "Você atingiu o limite de 3 tentativas. Recarregue a página para tentar novamente.";
             }
 
-            return false;
+            podeEntrar = false;
         }
 
-        setInterval(sumirMensagem, 5000)
+        if (podeEntrar) {
+            setInterval(sumirMensagem, 5000)
 
-        console.log("FORM LOGIN: ", emailVar);
-        console.log("FORM SENHA: ", senhaVar);
+            console.log("FORM LOGIN: ", emailVar);
+            console.log("FORM SENHA: ", senhaVar);
 
-        fetch("/usuarios/autenticar", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify({
-                emailServer: emailVar,
-                senhaServer: senhaVar
+            fetch("/usuarios/autenticar", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    emailServer: emailVar,
+                    senhaServer: senhaVar
+                })
+            }).then(function (resposta) {
+                console.log("ESTOU NO THEN DO entrar()!")
+
+                if (resposta.ok) {
+                    console.log(resposta);
+                    tentativasLogin = 0;
+                    btnEntrar.disabled = false;
+
+                    resposta.json().then(function (json) {
+                        console.log(json);
+                        console.log(JSON.stringify(json));
+                        sessionStorage.EMAIL_USUARIO = json.email;
+                        sessionStorage.NOME_USUARIO = json.nome;
+                        sessionStorage.ID_USUARIO = json.id;
+
+                        setTimeout(function () {
+                            window.location = "./dashboard/dashboard.html";
+                        }, 1000); // apenas para exibir o loading
+
+                    });
+
+                } else {
+
+                    console.log("Houve um erro ao tentar realizar o login!");
+
+                    tentativasLogin++;
+
+                    resposta.text().then(function (texto) {
+                        console.error(texto);
+
+                        let tentativasRestantes = 3 - tentativasLogin;
+                        if (tentativasRestantes < 0) {
+                            tentativasRestantes = 0;
+                        }
+
+                        if (tentativasLogin >= 3) {
+                            btnEntrar.disabled = true;
+                            finalizarAguardar("Você atingiu o limite de 3 tentativas. Recarregue a página para tentar novamente.");
+                        } else {
+                            finalizarAguardar(`${texto} Tentativas restantes: ${tentativasRestantes}`);
+                        }
+                    });
+                }
+            }).catch(function (erro) {
+                console.log(erro);
             })
-        }).then(function (resposta) {
-            console.log("ESTOU NO THEN DO entrar()!")
-
-            if (resposta.ok) {
-                console.log(resposta);
-                tentativasLogin = 0;
-                btnEntrar.disabled = false;
-
-                resposta.json().then(json => {
-                    console.log(json);
-                    console.log(JSON.stringify(json));
-                    sessionStorage.EMAIL_USUARIO = json.email;
-                    sessionStorage.NOME_USUARIO = json.nome;
-                    sessionStorage.ID_USUARIO = json.id;
-
-                    setTimeout(function () {
-                        window.location = "./dashboard/dashboard.html";
-                    }, 1000); // apenas para exibir o loading
-
-                });
-
-            } else {
-
-                console.log("Houve um erro ao tentar realizar o login!");
-
-                tentativasLogin++;
-
-                resposta.text().then(texto => {
-                    console.error(texto);
-
-                    let tentativasRestantes = 3 - tentativasLogin;
-                    if (tentativasRestantes < 0) {
-                        tentativasRestantes = 0;
-                    }
-
-                    if (tentativasLogin >= 3) {
-                        btnEntrar.disabled = true;
-                        finalizarAguardar("Você atingiu o limite de 3 tentativas. Recarregue a página para tentar novamente.");
-                    } else {
-                        finalizarAguardar(`${texto} Tentativas restantes: ${tentativasRestantes}`);
-                    }
-                });
-            }
-
-        }).catch(function (erro) {
-            console.log(erro);
-        })
-
-        return false;
+        } else {
+            finalizarAguardar();
+        }
     }
 
     function sumirMensagem() {
