@@ -202,6 +202,10 @@
           cardErro.style.display = "block";
           mensagem_erro.innerHTML = "A confirmação de senha não pode estar em branco.";
           finalizarAguardar();
+        } else if (!emailVar.includes("@") || !emailVar.includes(".com") || emailVar.indexOf("@") > emailVar.indexOf(".com")) {
+          cardErro.style.display = "block";
+          mensagem_erro.innerHTML = "O email precisa conter @ e .com, com o @ vindo antes do .com.";
+          finalizarAguardar();
         } else {
           setInterval(sumirMensagem, 5000);
 
