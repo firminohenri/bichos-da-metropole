@@ -119,7 +119,7 @@
                             placeholder="Digite sua senha aqui">
                     </div>
 
-                    <button class="btn-login" type="button" onclick="entrar()">Entrar</button>
+                    <button id="btn_entrar" class="btn-login" type="button" onclick="entrar()">Entrar</button>
 
                     <div id="div_aguardar" class="loading-div">
                         <img src="./assets/circle-loading.gif" id="loading-gif">
@@ -165,22 +165,37 @@
 
 <script>
 
+    let tentativasLogin = 0;
+
 
     function entrar() {
         aguardar();
 
-        var emailVar = email_input.value;
-        var senhaVar = senha_input.value;
+        let emailVar = email_input.value;
+        let senhaVar = senha_input.value;
+        let btnEntrar = document.getElementById("btn_entrar");
 
         if (emailVar == "" || senhaVar == "") {
-            cardErro.style.display = "block"
-            mensagem_erro.innerHTML = "(Mensagem de erro para todos os campos em branco)";
+            tentativasLogin++;
+            let tentativasRestantes = 3 - tentativasLogin;
+            if (tentativasRestantes < 0) {
+                tentativasRestantes = 0;
+            }
+
+            cardErro.style.display = "block";
+            mensagem_erro.innerHTML = `Preencha email e senha antes de tentar entrar. Tentativas restantes: ${tentativasRestantes}`;
+
             finalizarAguardar();
+
+            if (tentativasLogin >= 3) {
+                btnEntrar.disabled = true;
+                mensagem_erro.innerHTML = "Você atingiu o limite de 3 tentativas. Recarregue a página para tentar novamente.";
+            }
+
             return false;
         }
-        else {
-            setInterval(sumirMensagem, 5000)
-        }
+
+        setInterval(sumirMensagem, 5000)
 
         console.log("FORM LOGIN: ", emailVar);
         console.log("FORM SENHA: ", senhaVar);
@@ -199,6 +214,8 @@
 
             if (resposta.ok) {
                 console.log(resposta);
+                tentativasLogin = 0;
+                btnEntrar.disabled = false;
 
                 resposta.json().then(json => {
                     console.log(json);
@@ -217,9 +234,22 @@
 
                 console.log("Houve um erro ao tentar realizar o login!");
 
+                tentativasLogin++;
+
                 resposta.text().then(texto => {
                     console.error(texto);
-                    finalizarAguardar(texto);
+
+                    let tentativasRestantes = 3 - tentativasLogin;
+                    if (tentativasRestantes < 0) {
+                        tentativasRestantes = 0;
+                    }
+
+                    if (tentativasLogin >= 3) {
+                        btnEntrar.disabled = true;
+                        finalizarAguardar("Você atingiu o limite de 3 tentativas. Recarregue a página para tentar novamente.");
+                    } else {
+                        finalizarAguardar(`${texto} Tentativas restantes: ${tentativasRestantes}`);
+                    }
                 });
             }
 

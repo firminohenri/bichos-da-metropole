@@ -176,14 +176,36 @@
 
 <script>
 
+  function validarSenha(senha) {
+    let indice = 0;
+    let possuiMaiuscula = false;
+    let possuiNumero = false;
+
+    while (indice < senha.length) {
+      let caractere = senha.charAt(indice);
+
+      if (caractere >= "A" && caractere <= "Z") {
+        possuiMaiuscula = true;
+      }
+
+      if (caractere >= "0" && caractere <= "9") {
+        possuiNumero = true;
+      }
+
+      indice++;
+    }
+
+    return senha.length >= 6 && possuiMaiuscula && possuiNumero;
+  }
+
   function cadastrar() {
     aguardar();
 
     //Recupere o valor da nova input pelo nome do id
-    var nomeVar = nome_input.value;
-    var emailVar = email_input.value;
-    var senhaVar = senha_input.value;
-    var confirmacaoSenhaVar = confirmacao_senha_input.value;
+    let nomeVar = nome_input.value;
+    let emailVar = email_input.value;
+    let senhaVar = senha_input.value;
+    let confirmacaoSenhaVar = confirmacao_senha_input.value;
 
     // Verificando se há algum campo em branco
     if (
@@ -200,6 +222,20 @@
       return false;
     } else {
       setInterval(sumirMensagem, 5000);
+    }
+
+    if (senhaVar !== confirmacaoSenhaVar) {
+      cardErro.style.display = "block";
+      mensagem_erro.innerHTML = "A senha e a confirmação de senha precisam ser iguais.";
+      finalizarAguardar();
+      return false;
+    }
+
+    if (!validarSenha(senhaVar)) {
+      cardErro.style.display = "block";
+      mensagem_erro.innerHTML = "A senha precisa ter no mínimo 6 caracteres, uma letra maiúscula e um número.";
+      finalizarAguardar();
+      return false;
     }
 
     // Enviando o valor da nova input
